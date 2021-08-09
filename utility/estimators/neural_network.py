@@ -40,6 +40,7 @@ def get_layers(shape, activation, regularizer, drop_out, batch_norm):
 
 
 def ann(layer_list, out_shape, loss, opt):
+    tf.random.set_seed(1)
     model = tf.keras.Sequential()
     for layer in layer_list:
         model.add(layer.kind(**layer.get_attr()))
@@ -48,14 +49,14 @@ def ann(layer_list, out_shape, loss, opt):
     return model
 
 
-def fit_ann(x_tr, y_tr, layer_list, rate=0.015, loss="mae", epochs=3_000, validation_split=0.15, batch_size=1_000):
+def fit_ann(x_tr, y_tr, layer_list, rate=0.0015, loss="mae", epochs=3_000, validation_split=0.15, batch_size=1_000):
 
     if len(y_tr.shape) > 1:
         out_sh = y_tr.shape[1]
     else:
         out_sh = 1
 
-    opt = tf.keras.optimizers.SGD(learning_rate=rate)
+    opt = tf.keras.optimizers.Adagrad(learning_rate=rate)
     est = ann(layer_list, out_sh, loss, opt)
     hist = est.fit(x_tr, y_tr, batch_size,
                    epochs=epochs, verbose=2,

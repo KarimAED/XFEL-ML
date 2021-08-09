@@ -3,6 +3,10 @@ from deprecated import deprecated
 from sklearn.experimental import enable_hist_gradient_boosting
 from sklearn.ensemble import HistGradientBoostingRegressor
 import xgboost as xgb
+import numpy as np
+
+
+mae = lambda x, y: np.mean(np.abs(x-y))
 
 
 @deprecated("The histogram gradient boosting regressor is experimental and should not be used.")
