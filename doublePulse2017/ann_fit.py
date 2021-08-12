@@ -19,7 +19,7 @@ print(output_reference)
 #%%
 layers = neural_network.get_layers([50, 50, 20], "relu", "l2", 0, False)
 
-ann, hist = neural_network.fit_ann(x_train, y_train, layers, epochs=2_000)
+ann, hist = neural_network.fit_ann(x_train, y_train, layers, epochs=5_000, rate=0.001)
 #%%
 
 print(f"Training MAE: {ann.evaluate(x_train, y_train)[1]}")

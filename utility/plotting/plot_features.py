@@ -1,6 +1,3 @@
-import matplotlib
-matplotlib.use("TkAgg")
-
 import matplotlib.pyplot as plt
 plt.style.use("./utility/plotting/styling.mplstyle")
 

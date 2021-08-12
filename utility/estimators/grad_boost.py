@@ -18,8 +18,9 @@ def fit_grad_boost(x_tr, y_tr, reg=1000, lr=0.1, iter=1000, samples=20, leaves=3
     return reg
 
 
-def fit_xgboost(x_tr, y_tr, n_est=20, n_jobs=4, gamma=0.1):
-    reg = xgb.XGBRegressor(random_state=1, n_estimators=n_est, verbosity=2, n_jobs=n_jobs, gamma=gamma)
+def fit_xgboost(x_tr, y_tr, n_est=20, n_jobs=4, gamma=0.1, l2=0.0):
+    reg = xgb.XGBRegressor(random_state=1, n_estimators=n_est, verbosity=2,
+                           n_jobs=n_jobs, gamma=gamma, reg_lambda=l2, tree_method="exact")
 
     reg.fit(x_tr, y_tr)
     return reg
