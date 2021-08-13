@@ -4,9 +4,9 @@ Plots and data are saved to the results/no_feature_selection subfolder.
 """
 import numpy as np
 
-from utility.estimators import grad_boost, neural_network
+from utility.estimators import neural_network
 from utility.plotting import plot_fit
-from doublePulse2017.setup import get_data
+from doublePulse2017.code.setup import get_data
 
 
 #%%

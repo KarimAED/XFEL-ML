@@ -6,7 +6,7 @@ import numpy as np
 
 from utility.estimators import grad_boost
 from utility.plotting import plot_fit
-from doublePulse2017.setup import get_data
+from doublePulse2017.code.setup import get_data
 
 
 #%%

@@ -3,7 +3,7 @@ import pandas as pd
 
 from utility.estimators import neural_network
 from utility.plotting import plot_features, plot_fit
-from doublePulse2017.setup import get_data
+from doublePulse2017.code.setup import get_data
 
 
 #%%
