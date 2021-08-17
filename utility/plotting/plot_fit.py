@@ -3,17 +3,17 @@ import matplotlib.pyplot as plt
 plt.style.use("./utility/plotting/styling.mplstyle")
 
 
-def plot_pvm(y, pred, label, x_label, y_label, x_ticks=None, y_ticks=None, save_str=""):
-    plt.figure(figsize=(8, 8))
+def plot_pvm(y, pred, label, x_label, y_label, save_str=""):
+    fig = plt.figure(figsize=(8, 8))
     ax = plt.subplot(111)
     x = np.array([np.min(y), np.max(y)])
+    y = np.append(y, x)
+    pred = np.append(pred, x)
     ax.plot(x, x, "w--", label="x=y")
-    if x_ticks:
-        ax.xaxis.set_ticks(x_ticks)
-    if y_ticks:
-        ax.yaxis.set_ticks(y_ticks)
-    ax.hist2d(y, pred, bins=np.linspace(x[0], x[1], 100), density=True, cmin=-1)
+    h = ax.hist2d(y, pred, bins=np.linspace(x[0], x[1], 100), cmin=-1)
     ax.legend()
+    cbar = fig.colorbar(h[3], label="point density")
+
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
     plt.title(label)

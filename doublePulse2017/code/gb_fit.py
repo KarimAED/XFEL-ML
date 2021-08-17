@@ -30,7 +30,7 @@ test_out = y_test*out_ref.loc["test_std"]+out_ref.loc["test_mean"]
 test_pred = predictions*out_ref.loc["test_std"]+out_ref.loc["test_mean"]
 
 train_out = y_train*out_ref.loc["train_std"]+out_ref.loc["train_mean"]
-train_pred = xgb.predict(x_train).T[0]*out_ref.loc["train_std"]+out_ref.loc["train_mean"]
+train_pred = xgb.predict(x_train)*out_ref.loc["train_std"]+out_ref.loc["train_mean"]
 
 np.savez("doublePulse2017/results/ex_2_gb_perf/xgb_pred.npz",
          train_out=train_out, train_pred=train_pred, test_out=test_out, test_pred=test_pred)
@@ -39,9 +39,7 @@ np.savez("doublePulse2017/results/ex_2_gb_perf/xgb_pred.npz",
 
 eval_mae = grad_boost.mae(xgb.predict(x_test), y_test)*out_ref.loc["test_std"]
 
-ticks = [-15, -10, -5, 0, 5, 10, 15, 20, 25]
-
 plot_fit.plot_pvm(test_out, test_pred,
-                  f"ANN; MAE: {round(eval_mae, 2)}fs",
-                  "Expected Delay in fs", "Predicted Delay in fs",
-                  ticks, ticks, "doublePulse2017/results/ex_2_gb_perf/gb_hist2d")
+                  f"GB; MAE: {round(eval_mae, 2)}fs",
+                  "Expected Delay (fs)", "Predicted Delay (fs)",
+                  "doublePulse2017/results/ex_2_gb_perf/gb_hist2d")

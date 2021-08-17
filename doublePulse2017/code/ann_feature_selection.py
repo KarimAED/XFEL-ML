@@ -59,7 +59,7 @@ for l in range(len(ranking)):
             rng = np.random.default_rng(1)
             x_te_masked.append(rng.permutation(x_test[:, j]))
     x_te_masked = np.stack(x_te_masked).T
-    scores.append(ann.evaluate(x_te_masked, y_test)[1])
+    scores.append(ann.evaluate(x_te_masked, y_test)[1]*output_reference.loc['test_std', 'Delays'])
 
 plot_features.plot_feat_cumulative(scores)
 
@@ -80,15 +80,6 @@ new_ann, hew_hist = neural_network.fit_ann(x_tr_filt, y_train, layers, epochs=5_
 print(f"Training MAE: {new_ann.evaluate(x_tr_filt, y_train)[1]}")
 print(f"Testing MAE: {new_ann.evaluate(x_te_filt, y_test)[1]}")
 
-ticks = [-15, -10, -5, 0, 5, 10, 15, 20, 25]
-
-label = f"ANN; MAE: {round(new_ann.evaluate(x_te_filt, y_test)[1]*output_reference.loc['test_std', 'Delays'], 2)}fs"
-
-plot_fit.plot_pvm(y_test, new_ann.predict(x_te_filt).T[0],
-                  label,
-                  "Expected Delay in fs", "Predicted Delay in fs",
-                  ticks, ticks, "doublePulse2017/results/ex_1_ann_feat/feat_low_hist2d")
-
 #%%
 predictions = new_ann.predict(x_te_filt).T[0]
 
@@ -102,3 +93,12 @@ train_pred = new_ann.predict(x_tr_filt).T[0]*out_ref.loc["train_std"]+out_ref.lo
 
 np.savez("doublePulse2017/results/ex_1_ann_feat/ann_10_feat_pred.npz",
          train_out=train_out, train_pred=train_pred, test_out=test_out, test_pred=test_pred)
+
+#%%
+
+label = f"ANN; MAE: {round(new_ann.evaluate(x_te_filt, y_test)[1]*output_reference.loc['test_std', 'Delays'], 2)}fs"
+
+plot_fit.plot_pvm(test_out, test_pred,
+                  label,
+                  "Expected Delay (fs)", "Predicted Delay (fs)",
+                  "doublePulse2017/results/ex_1_ann_feat/ann_low_delays_hist2d")

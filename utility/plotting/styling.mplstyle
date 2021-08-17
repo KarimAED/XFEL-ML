@@ -293,10 +293,10 @@ axes.edgecolor: bcbcbc
 #axes.grid           : False   ## display grid or not
 #axes.grid.axis      : both    ## which axis the grid should apply to
 #axes.grid.which     : major   ## gridlines at major, minor or both ticks
-axes.titlesize      : 20   ## fontsize of the axes title
+axes.titlesize      : 25   ## fontsize of the axes title
 #axes.titleweight    : normal  ## font weight of title
 axes.titlepad       : 10     ## pad between axes and title in points
-axes.labelsize      : 20  ## fontsize of the x any y labels
+axes.labelsize      : 25  ## fontsize of the x any y labels
 #axes.labelpad       : 4.0     ## space between label and axis
 #axes.labelweight    : normal  ## weight of the x and y labels
 #axes.labelcolor     : black
@@ -531,7 +531,7 @@ savefig.dpi         : 1600   ## figure dots per inch or 'figure'
 #savefig.facecolor   : white    ## figure facecolor when saving
 #savefig.edgecolor   : white    ## figure edgecolor when saving
 #savefig.format      : png      ## png, ps, pdf, svg
-#savefig.bbox        : standard ## 'tight' or 'standard'.
+savefig.bbox        : tight ## 'tight' or 'standard'.
                                 ## 'tight' is incompatible with pipe-based animation
                                 ## backends but will workd with temporary file based ones:
                                 ## e.g. setting animation.writer to ffmpeg will not work,

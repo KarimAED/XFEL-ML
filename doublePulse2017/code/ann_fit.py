@@ -43,10 +43,8 @@ np.savez("doublePulse2017/results/ex_1_ann_feat/ann_pred.npz",
 
 eval_mae = ann.evaluate(x_test, y_test)[1]*out_ref.loc["test_std"]
 
-ticks = [-15, -10, -5, 0, 5, 10, 15, 20, 25]
-
 plot_fit.plot_pvm(test_out, test_pred,
                   f"ANN; MAE: {round(eval_mae, 2)}fs",
-                  "Expected Delay in fs", "Predicted Delay in fs",
-                  ticks, ticks, "doublePulse2017/results/ex_1_ann_feat/ann_hist2d")
+                  "Expected Delay (fs)", "Predicted Delay (fs)",
+                  "doublePulse2017/results/ex_1_ann_feat/ann_hist2d")
 

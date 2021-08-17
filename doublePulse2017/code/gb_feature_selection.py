@@ -43,6 +43,8 @@ feature_rank.sort_values("mae_score", inplace=True, ascending=False)
 
 plot_features.plot_feat_hist(feature_rank["mae_score"].values, feature_rank["features"].values)
 
+test_std = output_reference.loc['test_std', 'Delays']
+
 ranking = feature_rank["feat_ind"].values
 
 scores = []
@@ -57,7 +59,7 @@ for l in range(len(ranking)):
             rng = np.random.default_rng(1)
             x_te_masked.append(rng.permutation(x_test[:, j]))
     x_te_masked = np.stack(x_te_masked).T
-    scores.append(grad_boost.mae(xgb.predict(x_te_masked), y_test))
+    scores.append(grad_boost.mae(xgb.predict(x_te_masked), y_test)*test_std)
 
 plot_features.plot_feat_cumulative(scores)
 
@@ -77,16 +79,6 @@ new_xgb = grad_boost.fit_xgboost(x_tr_filt, y_train)
 print(f"Training MAE: {grad_boost.mae(new_xgb.predict(x_tr_filt), y_train)}")
 print(f"Testing MAE: {grad_boost.mae(new_xgb.predict(x_te_filt), y_test)}")
 
-ticks = [-15, -10, -5, 0, 5, 10, 15, 20, 25]
-
-test_std = output_reference.loc['test_std', 'Delays']
-
-label = f"ANN; MAE: {round(grad_boost.mae(new_xgb.predict(x_te_filt), y_test)*test_std, 2)}fs"
-
-plot_fit.plot_pvm(y_test, new_xgb.predict(x_te_filt),
-                  label,
-                  "Expected Delay in fs", "Predicted Delay in fs",
-                  ticks, ticks, "doublePulse2017/results/ex_2_gb_perf/xgb_feat_low_hist2d")
 
 #%%
 predictions = new_xgb.predict(x_te_filt)
@@ -101,3 +93,13 @@ train_pred = new_xgb.predict(x_tr_filt)*out_ref.loc["train_std"]+out_ref.loc["tr
 
 np.savez("doublePulse2017/results/ex_2_gb_perf/xgb_10_feat_pred.npz",
          train_out=train_out, train_pred=train_pred, test_out=test_out, test_pred=test_pred)
+
+#%%
+test_std = output_reference.loc['test_std', 'Delays']
+
+label = f"GB; MAE: {round(grad_boost.mae(new_xgb.predict(x_te_filt), y_test)*test_std, 2)}fs"
+
+plot_fit.plot_pvm(test_out, test_pred,
+                  label,
+                  "Expected Delay (fs)", "Predicted Delay (fs)",
+                  "doublePulse2017/results/ex_2_gb_perf/xgb_low_delays_hist2d")
