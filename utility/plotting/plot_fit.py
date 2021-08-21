@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 plt.style.use("./utility/plotting/styling.mplstyle")
+from matplotlib.ticker import MaxNLocator
 
 
 def plot_pvm(y, pred, label, x_label, y_label, save_str=""):
@@ -9,6 +10,8 @@ def plot_pvm(y, pred, label, x_label, y_label, save_str=""):
     x = np.array([np.min(y), np.max(y)])
     y = np.append(y, x)
     pred = np.append(pred, x)
+    ax.yaxis.set_major_locator(MaxNLocator(5))
+    ax.xaxis.set_major_locator(MaxNLocator(5))
     ax.plot(x, x, "w--", label="x=y")
     h = ax.hist2d(y, pred, bins=np.linspace(x[0], x[1], 100), cmin=-1)
     ax.legend()
