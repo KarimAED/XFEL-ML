@@ -96,4 +96,4 @@ label = f"LIN; MAE: {round(mae, 2)}fs"
 plot_fit.plot_pvm(test_out, test_pred,
                   label,
                   "Expected Delay (fs)", "Predicted Delay (fs)",
-                  "doublePulse2017/results/ex_2_gb_perf/lin_low_delays_hist2d")
+                  "doublePulse2017/results/ex_2_gb_perf/lin_low_delays_hist2d", legend=False, vmax=19)

@@ -35,7 +35,7 @@ string_data = {
     "plot_fname": "pumpProbe2021/results/ex_1_pump_pred/xgb_low_pump_hist2d"
 }
 
-gb_feature_pipeline(data, string_data)
+gb_feature_pipeline(data, string_data, vmax=11, legend=True)
 
 #%%
 

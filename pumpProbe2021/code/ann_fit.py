@@ -6,6 +6,8 @@ undulators_2_datasets = ["u2_271_37229_events.pkl", "u2_273_37026_events.pkl", "
 
 #%%
 
+# Pump Prediction with ANN and probe in input (2 undulators)
+
 data = get_pump_data(undulators_2_datasets[1])
 
 string_data = {
@@ -16,11 +18,14 @@ string_data = {
     "plot_fname": "pumpProbe2021/results/ex_1_pump_pred/ann_low_pump_hist2d"
 }
 
-ann_feature_pipeline(data, string_data)
+ann_feature_pipeline(data, string_data, vmax=11, legend=False)
 
 #%%
 
+# Pump Prediction with ANN and without probe in input (2 undulators)
+
 pump_data = get_pump_data(undulators_2_datasets[1], include_probe=False)
+
 
 pump_str_data = {
     "feat_name": "vls_com_pump",
@@ -33,6 +38,8 @@ pump_str_data = {
 ann_feature_pipeline(pump_data, pump_str_data)
 
 #%%
+
+# probe prediction with ANN and without pump in input (2 undulators)
 
 probe_data = get_probe_data(undulators_2_datasets[1], include_pump=False)
 
@@ -48,10 +55,11 @@ ann_feature_pipeline(probe_data, probe_str_data)
 
 #%%
 
+# probe prediction with ANN and without pump in input (1 undulator)
+
 u1_data = "u1_36825_events.pkl"
 
 u1_probe_data = get_probe_data(u1_data, include_pump=False)
-
 
 u1_str_data = {
     "feat_name": "vls_com_probe",
@@ -65,6 +73,8 @@ ann_feature_pipeline(u1_probe_data, u1_str_data)
 
 #%%
 
+# probe prediction with ANN and without pump in input (3 undulators)
+
 u3_data = "u3_36610_events.pkl"
 
 u3_probe_data = get_probe_data(u3_data, include_pump=False)
@@ -76,6 +86,44 @@ u3_str_data = {
     "unit": "eV",
     "data_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_10_feat_u3_pred.npz",
     "plot_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_feat_u3_hist2d_no_corr"
+}
+
+ann_feature_pipeline(u3_probe_data, u3_str_data)
+
+#%%
+
+# pump prediction with ANN and without probe in input (1 undulator)
+
+u1_data = "u1_36825_events.pkl"
+
+u1_probe_data = get_pump_data(u1_data, include_probe=False)
+
+
+u1_str_data = {
+    "feat_name": "vls_com_pump",
+    "plot_lab": "Pump CoM",
+    "unit": "eV",
+    "data_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_10_feat_u1_pump.npz",
+    "plot_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_feat_u1_pump_hist2d_no_corr"
+}
+
+ann_feature_pipeline(u1_probe_data, u1_str_data)
+
+#%%
+
+# pump prediction with ANN and without probe in input (3 undulators)
+
+u3_data = "u3_36610_events.pkl"
+
+u3_probe_data = get_pump_data(u3_data, include_probe=False)
+
+
+u3_str_data = {
+    "feat_name": "vls_com_pump",
+    "plot_lab": "Pump CoM",
+    "unit": "eV",
+    "data_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_10_feat_u3_pump.npz",
+    "plot_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_feat_u3_pump_hist2d_no_corr"
 }
 
 ann_feature_pipeline(u3_probe_data, u3_str_data)

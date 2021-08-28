@@ -4,7 +4,7 @@ plt.style.use("./utility/plotting/styling.mplstyle")
 from matplotlib.ticker import MaxNLocator
 
 
-def plot_pvm(y, pred, label, x_label, y_label, save_str=""):
+def plot_pvm(y, pred, label, x_label, y_label, save_str="", legend=True, vmax=None):
     fig = plt.figure(figsize=(8, 8))
     ax = plt.subplot(111)
     x = np.array([np.min(y), np.max(y)])
@@ -13,9 +13,14 @@ def plot_pvm(y, pred, label, x_label, y_label, save_str=""):
     ax.yaxis.set_major_locator(MaxNLocator(5))
     ax.xaxis.set_major_locator(MaxNLocator(5))
     ax.plot(x, x, "w--", label="x=y")
-    h = ax.hist2d(y, pred, bins=np.linspace(x[0], x[1], 100), cmin=-1)
+    if vmax is not None:
+        h = ax.hist2d(y, pred, bins=np.linspace(x[0], x[1], 100), vmax=vmax)
+    else:
+        h = ax.hist2d(y, pred, bins=np.linspace(x[0], x[1], 100))
+    print(np.max(h[0]))
     ax.legend()
-    cbar = fig.colorbar(h[3], label="point density")
+    if legend:
+        cbar = fig.colorbar(h[3])
 
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)

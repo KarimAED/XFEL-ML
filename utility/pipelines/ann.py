@@ -44,7 +44,7 @@ def ann_pipeline(data, string_data):
     return ann
 
 
-def ann_feature_pipeline(data, string_data):
+def ann_feature_pipeline(data, string_data, vmax=None, legend=True):
     x_train, x_test, y_train, y_test, input_reference, output_reference = data
     print(input_reference)
     print(output_reference)
@@ -129,8 +129,14 @@ def ann_feature_pipeline(data, string_data):
 
     label = f"ANN; MAE: {round(new_ann.evaluate(x_te_filt, y_test)[1] * std, 2)}{unit}"
 
-    plot_fit.plot_pvm(test_out, test_pred,
-                      label,
-                      f"Expected {xy_label} ({unit})", f"Predicted {xy_label} ({unit})",
-                      string_data["plot_fname"])
+    if vmax is not None:
+        plot_fit.plot_pvm(test_out, test_pred,
+                          label,
+                          f"Expected {xy_label} ({unit})", f"Predicted {xy_label} ({unit})",
+                          string_data["plot_fname"], vmax=vmax, legend=legend)
+    else:
+        plot_fit.plot_pvm(test_out, test_pred,
+                          label,
+                          f"Expected {xy_label} ({unit})", f"Predicted {xy_label} ({unit})",
+                          string_data["plot_fname"], legend=legend)
     return new_ann

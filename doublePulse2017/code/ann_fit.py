@@ -32,4 +32,4 @@ string_data = {
     "plot_fname": "doublePulse2017/results/ex_1_ann_feat/ann_low_delays_hist2d"
 }
 
-ann_feature_pipeline(data, string_data)
+ann_feature_pipeline(data, string_data, legend=False, vmax=19)

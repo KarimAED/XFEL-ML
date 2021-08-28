@@ -40,7 +40,7 @@ def gb_pipeline(data, string_data):
                       string_data["plot_fname"])
 
 
-def gb_feature_pipeline(data, string_data):
+def gb_feature_pipeline(data, string_data, vmax=None, legend=True):
     x_train, x_test, y_train, y_test, input_reference, output_reference = data
 
     print(input_reference)
@@ -126,7 +126,13 @@ def gb_feature_pipeline(data, string_data):
 
     label = f"GB; MAE: {round(grad_boost.mae(new_xgb.predict(x_te_filt), y_test) * test_std, 2)}{unit}"
 
-    plot_fit.plot_pvm(test_out, test_pred,
-                      label,
-                      f"Expected {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
-                      string_data["plot_fname"])
+    if vmax is not None:
+        plot_fit.plot_pvm(test_out, test_pred,
+                          label,
+                          f"Expected {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
+                          string_data["plot_fname"], vmax=vmax, legend=legend)
+    else:
+        plot_fit.plot_pvm(test_out, test_pred,
+                          label,
+                          f"Expected {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
+                          string_data["plot_fname"], legend=legend)

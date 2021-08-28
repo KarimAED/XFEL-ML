@@ -32,4 +32,4 @@ string_data = {
     "plot_fname": "doublePulse2017/results/ex_2_gb_perf/xgb_low_delays_hist2d"
 }
 
-gb_feature_pipeline(data, string_data)
+gb_feature_pipeline(data, string_data, legend=True, vmax=19)
