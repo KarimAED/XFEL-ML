@@ -30,8 +30,7 @@ def ann_pipeline(data, string_data):
     np.savez(string_data["data_fname"],
              train_out=train_out, train_pred=train_pred, test_out=test_out, test_pred=test_pred)
 
-
-    eval_mae = ann.evaluate(x_test, y_test)[1] * out_ref.loc["test_std"]
+    eval_mae = ann.evaluate(x_test, y_test)[1]
 
     unit = string_data["unit"]
     label = string_data["plot_lab"]
@@ -127,7 +126,7 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True):
 
     std = out_ref.loc['test_std']
 
-    label = f"ANN; MAE: {round(new_ann.evaluate(x_te_filt, y_test)[1] * std, 2)}{unit}"
+    label = "ANN; MAE: {}{}".format(round(new_ann.evaluate(x_te_filt, y_test)[1], 2), r'$\sigma$')
 
     if vmax is not None:
         plot_fit.plot_pvm(test_out, test_pred,

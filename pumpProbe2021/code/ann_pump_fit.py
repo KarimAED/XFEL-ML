@@ -46,7 +46,7 @@ probe_data = get_probe_data(undulators_2_datasets[1], include_pump=False)
 probe_str_data = {
     "feat_name": "vls_com_probe",
     "plot_lab": "Probe CoM",
-    "unit": "eV",
+    "unit": r"$\sigma$",
     "data_fname": "pumpProbe2021/results/ex_2_pump_probe_corr/ann_10_feat_probe_pred.npz",
     "plot_fname": "pumpProbe2021/results/ex_2_pump_probe_corr/ann_feat_probe_hist2d_no_corr"
 }
@@ -64,7 +64,7 @@ u1_probe_data = get_probe_data(u1_data, include_pump=False)
 u1_str_data = {
     "feat_name": "vls_com_probe",
     "plot_lab": "Probe CoM",
-    "unit": "eV",
+    "unit": r"$\sigma$",
     "data_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_10_feat_u1_pred.npz",
     "plot_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_feat_u1_hist2d_no_corr"
 }
@@ -83,7 +83,7 @@ u3_probe_data = get_probe_data(u3_data, include_pump=False)
 u3_str_data = {
     "feat_name": "vls_com_probe",
     "plot_lab": "Probe CoM",
-    "unit": "eV",
+    "unit": r"$\sigma$",
     "data_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_10_feat_u3_pred.npz",
     "plot_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_feat_u3_hist2d_no_corr"
 }
@@ -102,7 +102,7 @@ u1_probe_data = get_pump_data(u1_data, include_probe=False)
 u1_str_data = {
     "feat_name": "vls_com_pump",
     "plot_lab": "Pump CoM",
-    "unit": "eV",
+    "unit": r"$\sigma$",
     "data_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_10_feat_u1_pump.npz",
     "plot_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_feat_u1_pump_hist2d_no_corr"
 }
@@ -121,7 +121,7 @@ u3_probe_data = get_pump_data(u3_data, include_probe=False)
 u3_str_data = {
     "feat_name": "vls_com_pump",
     "plot_lab": "Pump CoM",
-    "unit": "eV",
+    "unit": r"$\sigma$",
     "data_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_10_feat_u3_pump.npz",
     "plot_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_feat_u3_pump_hist2d_no_corr"
 }

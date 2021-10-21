@@ -29,7 +29,7 @@ def gb_pipeline(data, string_data):
     np.savez(string_data["data_fname"],
              train_out=train_out, train_pred=train_pred, test_out=test_out, test_pred=test_pred)
 
-    eval_mae = grad_boost.mae(xgb.predict(x_test), y_test)*out_ref.loc["test_std"]
+    eval_mae = grad_boost.mae(xgb.predict(x_test), y_test)
 
     plot_lab = string_data["plot_lab"]
     unit = string_data["unit"]
@@ -124,8 +124,7 @@ def gb_feature_pipeline(data, string_data, vmax=None, legend=True):
     plot_lab = string_data["plot_lab"]
     unit = string_data["unit"]
 
-    label = f"GB; MAE: {round(grad_boost.mae(new_xgb.predict(x_te_filt), y_test) * test_std, 2)}{unit}"
-
+    label = "GB; MAE: {}{}".format(round(grad_boost.mae(new_xgb.predict(x_te_filt), y_test), 2), r'$\sigma$')
     if vmax is not None:
         plot_fit.plot_pvm(test_out, test_pred,
                           label,

@@ -4,19 +4,25 @@ plt.style.use("./utility/plotting/styling.mplstyle")
 from matplotlib.ticker import MaxNLocator
 
 
-def plot_pvm(y, pred, label, x_label, y_label, save_str="", legend=True, vmax=None):
+def plot_pvm(y, pred, label, x_label, y_label, save_str="", legend=True, vmax=None, pred_lims=False):
     fig = plt.figure(figsize=(8, 8))
     ax = plt.subplot(111)
-    x = np.array([np.min(y), np.max(y)])
-    y = np.append(y, x)
-    pred = np.append(pred, x)
+    edge_x = np.array([np.min(y), np.max(y)])
+    edge_y = np.array([np.min(pred), np.max(pred)])
+    y = np.append(y, edge_x)
+    if pred_lims:
+        p_lim = edge_y
+    else:
+        p_lim = edge_x
+    pred = np.append(pred, p_lim)
     ax.yaxis.set_major_locator(MaxNLocator(5))
     ax.xaxis.set_major_locator(MaxNLocator(5))
-    ax.plot(x, x, "w--", label="x=y")
+    ax.plot(edge_x, edge_x, "w--", label="x=y")
+    bins = [np.linspace(edge_x[0], edge_x[1], 100), np.linspace(p_lim[0], p_lim[1], 100)]
     if vmax is not None:
-        h = ax.hist2d(y, pred, bins=np.linspace(x[0], x[1], 100), vmax=vmax)
+        h = ax.hist2d(y, pred, bins=bins, vmax=vmax)
     else:
-        h = ax.hist2d(y, pred, bins=np.linspace(x[0], x[1], 100))
+        h = ax.hist2d(y, pred, bins=bins)
     print(np.max(h[0]))
     ax.legend()
     if legend:
