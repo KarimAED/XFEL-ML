@@ -12,13 +12,13 @@ data = get_probe_data(undulators_2_datasets[1], include_pump=False)
 
 string_data = {
     "feat_name": "vls_com_probe",
-    "plot_lab": "Probe CoM",
+    "plot_lab": "central probe energy",
     "unit": "eV",
     "data_fname": "pumpProbe2021/results/ex_4_probe_pred/ann_10_feat_pred.npz",
     "plot_fname": "pumpProbe2021/results/ex_4_probe_pred/ann_probe_wo_pump_2_no_corr"
 }
 
-ann_feature_pipeline(data, string_data, legend=False)
+ann_feature_pipeline(data, string_data, legend=False, vmax=19)
 
 #%%
 
@@ -28,13 +28,13 @@ data = get_probe_data("u1_36825_events.pkl", include_pump=False)
 
 string_data = {
     "feat_name": "vls_com_probe",
-    "plot_lab": "Probe CoM",
+    "plot_lab": "central probe energy",
     "unit": "eV",
     "data_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_w_pump_1.npz",
     "plot_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_probe_wo_pump_1_no_corr"
 }
 
-ann_feature_pipeline(data, string_data, legend=False)
+ann_feature_pipeline(data, string_data, legend=False, vmax=19)
 
 #%%
 
@@ -44,10 +44,10 @@ data = get_probe_data("u3_36610_events.pkl", include_pump=False)
 
 string_data = {
     "feat_name": "vls_com_probe",
-    "plot_lab": "Probe CoM",
+    "plot_lab": "central probe energy",
     "unit": "eV",
     "data_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_w_pump_3.npz",
     "plot_fname": "pumpProbe2021/results/ex_3_undulator_vary/ann_probe_wo_pump_3_no_corr"
 }
 
-ann_feature_pipeline(data, string_data, legend=False)
+ann_feature_pipeline(data, string_data, legend=False, vmax=19)

@@ -4,10 +4,10 @@ d1 = "pumpProbe2021/results/ex_1_pump_pred/ann_pred.npz"
 d2 = "pumpProbe2021/results/ex_1_pump_pred/ann_10_feat_pred.npz"
 
 string_d = {
-    "quantity": "Pump CoM",
+    "quantity": "central pump energy",
     "unit": "eV",
-    "label_1": "full input space",
-    "label_2": "reduced input space",
+    "label_1": r"$N_{max}$",
+    "label_2": r"$N_{red}$",
 }
 
 scatter_diff(d1, d2, string_d)

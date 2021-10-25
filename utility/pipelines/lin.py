@@ -86,15 +86,15 @@ def lin_feature_pipeline(data, string_data, pred_lims=False, legend=True, vmax=N
 
     plot_lab = string_data["plot_lab"]
     unit = string_data["unit"]
-    label = "LIN; MAE: {}{}".format(round(grad_boost.mae(lin_model.predict(x_test), y_test), 2), r'$\sigma$')
+    label = "LIN; MAE: {}{}".format(round(grad_boost.mae(lin_model.predict(x_test), y_test)*out_ref["test_std"], 2), unit)
 
     if vmax is not None:
         plot_fit.plot_pvm(test_out, test_pred,
                           label,
-                          f"Expected {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
+                          f"Measured {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
                           string_data["plot_fname"], vmax=vmax, legend=legend, pred_lims=pred_lims)
     else:
         plot_fit.plot_pvm(test_out, test_pred,
                           label,
-                          f"Expected {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
+                          f"Measured {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
                           string_data["plot_fname"], legend=legend, pred_lims=pred_lims)

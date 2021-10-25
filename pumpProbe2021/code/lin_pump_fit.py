@@ -8,10 +8,10 @@ data = get_pump_data(undulators_2_datasets[1])
 
 string_data = {
     "feat_name": "vls_com_pump",
-    "plot_lab": "Pump CoM",
+    "plot_lab": "central pump energy",
     "unit": "eV",
     "data_fname": "pumpProbe2021/results/ex_1_pump_pred/lin_10_feat_pred.npz",
     "plot_fname": "pumpProbe2021/results/ex_1_pump_pred/lin_low_pump_hist2d"
 }
 
-lin_feature_pipeline(data, string_data, legend=True, pred_lims=True)
+lin_feature_pipeline(data, string_data, vmax=19, pred_lims=True, legend=False)

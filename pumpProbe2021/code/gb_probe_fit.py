@@ -18,4 +18,4 @@ string_data = {
     "plot_fname": "pumpProbe2021/results/ex_4_probe_pred/xgb_low_probe_hist2d"
 }
 
-gb_feature_pipeline(data, string_data)
+gb_feature_pipeline(data, string_data, legend=False, vmax=19)

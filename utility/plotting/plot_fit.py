@@ -11,20 +11,20 @@ def plot_pvm(y, pred, label, x_label, y_label, save_str="", legend=True, vmax=No
     edge_y = np.array([np.min(pred), np.max(pred)])
     y = np.append(y, edge_x)
     if pred_lims:
+        ax.ticklabel_format(style='scientific', axis='y', scilimits=(0, 0), useMathText=True)
         p_lim = edge_y
     else:
         p_lim = edge_x
     pred = np.append(pred, p_lim)
     ax.yaxis.set_major_locator(MaxNLocator(5))
     ax.xaxis.set_major_locator(MaxNLocator(5))
-    ax.plot(edge_x, edge_x, "w--", label="x=y")
+    ax.plot(edge_x, edge_x, "w--")
     bins = [np.linspace(edge_x[0], edge_x[1], 100), np.linspace(p_lim[0], p_lim[1], 100)]
     if vmax is not None:
         h = ax.hist2d(y, pred, bins=bins, vmax=vmax)
     else:
         h = ax.hist2d(y, pred, bins=bins)
     print(np.max(h[0]))
-    ax.legend()
     if legend:
         cbar = fig.colorbar(h[3])
 
@@ -39,7 +39,7 @@ def plot_pvm(y, pred, label, x_label, y_label, save_str="", legend=True, vmax=No
 def plot_scatter(y, pred, label, x_label, y_label):
     plt.figure()
     x = np.array([np.min(y), np.max(y)])
-    plt.plot(x, x, "k--", label="x=y")
+    plt.plot(x, x, "k--")
 
     plt.scatter(y, pred, s=0.1, alpha=0.3, label=label)
     plt.xlim(x[0], x[1])

@@ -11,4 +11,4 @@ string_data = {
     "plot_fname": "doublePulse2017/results/ex_2_gb_perf/lin_low_delays_hist2d"
 }
 
-lin_feature_pipeline(data, string_data, legend=False, vmax=19)
+lin_feature_pipeline(data, string_data, vmax=19, legend=True)

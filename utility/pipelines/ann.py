@@ -126,16 +126,16 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True):
 
     std = out_ref.loc['test_std']
 
-    label = "ANN; MAE: {}{}".format(round(new_ann.evaluate(x_te_filt, y_test)[1], 2), r'$\sigma$')
+    label = "ANN; MAE: {}{}".format(round(new_ann.evaluate(x_te_filt, y_test)[1]*std, 2), unit)
 
     if vmax is not None:
         plot_fit.plot_pvm(test_out, test_pred,
                           label,
-                          f"Expected {xy_label} ({unit})", f"Predicted {xy_label} ({unit})",
+                          f"Measured {xy_label} ({unit})", f"Predicted {xy_label} ({unit})",
                           string_data["plot_fname"], vmax=vmax, legend=legend)
     else:
         plot_fit.plot_pvm(test_out, test_pred,
                           label,
-                          f"Expected {xy_label} ({unit})", f"Predicted {xy_label} ({unit})",
+                          f"Measured {xy_label} ({unit})", f"Predicted {xy_label} ({unit})",
                           string_data["plot_fname"], legend=legend)
     return new_ann

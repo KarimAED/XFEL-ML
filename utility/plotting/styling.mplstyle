@@ -293,10 +293,10 @@ axes.edgecolor: bcbcbc
 #axes.grid           : False   ## display grid or not
 #axes.grid.axis      : both    ## which axis the grid should apply to
 #axes.grid.which     : major   ## gridlines at major, minor or both ticks
-axes.titlesize      : 25   ## fontsize of the axes title
+axes.titlesize      : 30   ## fontsize of the axes title
 #axes.titleweight    : normal  ## font weight of title
 axes.titlepad       : 10     ## pad between axes and title in points
-axes.labelsize      : 25  ## fontsize of the x any y labels
+axes.labelsize      : 30  ## fontsize of the x any y labels
 #axes.labelpad       : 4.0     ## space between label and axis
 #axes.labelweight    : normal  ## weight of the x and y labels
 #axes.labelcolor     : black
@@ -374,7 +374,7 @@ xtick.minor.size     : 4      ## minor tick size in points
 #xtick.major.pad      : 3.5    ## distance to major tick label in points
 #xtick.minor.pad      : 3.4    ## distance to the minor tick label in points
 #xtick.color          : black  ## color of the tick labels
-xtick.labelsize      : 28 ## fontsize of the tick labels
+xtick.labelsize      : 30 ## fontsize of the tick labels
 xtick.direction      : out    ## direction: in, out, or inout
 xtick.minor.visible  : False  ## visibility of minor ticks on x-axis
 #xtick.major.top      : False   ## draw x axis top major ticks
@@ -394,7 +394,7 @@ ytick.minor.size     : 4      ## minor tick size in points
 #ytick.major.pad      : 3.5    ## distance to major tick label in points
 #ytick.minor.pad      : 3.4    ## distance to the minor tick label in points
 #ytick.color          : black  ## color of the tick labels
-ytick.labelsize      : 28 ## fontsize of the tick labels
+ytick.labelsize      : 30 ## fontsize of the tick labels
 ytick.direction      : out    ## direction: in, out, or inout
 ytick.minor.visible  : False  ## visibility of minor ticks on y-axis
 #ytick.major.left     : True   ## draw y axis left major ticks
@@ -421,7 +421,7 @@ legend.fancybox      : True     ## if True, use a rounded box for the
 #legend.numpoints     : 1        ## the number of marker points in the legend line
 #legend.scatterpoints : 1        ## number of scatter points
 #legend.markerscale   : 1.0      ## the relative size of legend markers vs. original
-legend.fontsize      : 20
+legend.fontsize      : 28
 #legend.title_fontsize    : None ## None sets to the same as the default axes.
 ## Dimensions as fraction of fontsize:
 #legend.borderpad     : 0.4      ## border whitespace
