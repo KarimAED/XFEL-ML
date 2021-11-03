@@ -5,6 +5,10 @@ import pandas as pd
 import scipy.stats as sps
 
 from utility.split_prep_util import train_test_norm
+from collections import defaultdict
+from scipy.stats import spearmanr
+from scipy.cluster import hierarchy
+from scipy.spatial.distance import squareform
 
 source = os.path.join(os.getcwd(), "doublePulse2017/data")
 files = os.listdir(source)
@@ -96,7 +100,7 @@ def format_outp():
 #%%
 
 
-def get_data():
+def get_data(filterByCorr=False):
     inp_data, inp_labels = format_inp()
     output, output_labels = format_outp()
     double_inp = pd.DataFrame(data=inp_data, columns=inp_labels)
@@ -120,13 +124,6 @@ def get_data():
     delay_out = delay_out.loc[delay_mask, "Delays"]  # only select delay copy
 
     print(delay_inp.shape[0], "events left.")
-    print("Filtering input columns...")
-    # Filter input features by variance
-    var_thresh = 10
-    feat_columns = [c for c in delay_inp if len(np.unique(delay_inp[c])) > var_thresh]
-    delay_inp = delay_inp[feat_columns]
-
-    print(delay_inp.shape[1], "columns left.")
     print("Filtering MAD & Energy...")
     # Get mean absolute deviation of outputs
     mad_delays = abs((delay_out.values
@@ -143,6 +140,34 @@ def get_data():
     delay_inp = delay_inp.iloc[arg_mask]
     delay_out = delay_out.iloc[arg_mask]
     print(delay_inp.shape[0], "events left.")
+    print("Filtering input columns...")
+    # Filter input features by variance
+    var_thresh = 10
+    feat_columns = [c for c in delay_inp if len(np.unique(delay_inp[c])) > var_thresh]
+    delay_inp = delay_inp[feat_columns]
+    if filterByCorr:
+        corr = spearmanr(delay_inp.values).correlation
+
+        # Ensure the correlation matrix is symmetric
+        corr = np.abs((corr + corr.T) / 2)
+        np.fill_diagonal(corr, 1)
+
+        # We convert the correlation matrix to a distance matrix before performing
+        # hierarchical clustering using Ward's linkage.
+        distance_matrix = 1 - np.abs(corr)
+        dist_linkage = hierarchy.ward(squareform(distance_matrix))
+        dendro = hierarchy.dendrogram(
+            dist_linkage, labels=[i for i in range(len(delay_inp.columns))], leaf_rotation=90
+        )
+        dendro_idx = np.arange(0, len(dendro["ivl"]))
+        cluster_ids = hierarchy.fcluster(dist_linkage, .7, criterion="distance")
+        cluster_id_to_feature_ids = defaultdict(list)
+        for idx, cluster_id in enumerate(cluster_ids):
+            cluster_id_to_feature_ids[cluster_id].append(idx)
+        selected_features = [v[0] for v in cluster_id_to_feature_ids.values()]
+        delay_inp = delay_inp[delay_inp.columns[selected_features]]
+    print(delay_inp.shape[1], "columns left.")
+
     print("Done.")
     # Reuse training_test split and normalisation across inputs
     return train_test_norm(delay_inp, delay_out, split)

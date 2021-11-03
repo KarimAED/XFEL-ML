@@ -7,8 +7,8 @@ def plot_feat_hist(feats, labels):
     plt.figure(figsize=(15, 7))
     ax = plt.subplot(111)
 
-    ax.bar([i+1 for i in range(len(labels))], np.min(feats))
-    ax.set_ylabel("M")
+    ax.bar([i for i in range(len(labels))], feats/np.min(feats) - 1)
+    ax.set_ylabel(r"$P_i$")
     ax.set_xlabel("i")
 
     plt.show()

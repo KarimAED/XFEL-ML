@@ -12,9 +12,9 @@ data = get_probe_data(undulators_2_datasets[1])
 
 string_data = {
     "feat_name": "vls_com_probe",
-    "plot_lab": "Probe CoM",
+    "plot_lab": "central probe energy",
     "unit": "eV",
-    "data_fname": "pumpProbe2021/results/ex_4_probe_pred/xgb_10_feat_pred.npz",
+    "data_fname": "PaperFigures/Figure Data/Figure 3/gb_probe.npz",
     "plot_fname": "pumpProbe2021/results/ex_4_probe_pred/xgb_low_probe_hist2d"
 }
 

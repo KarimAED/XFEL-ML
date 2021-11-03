@@ -31,7 +31,7 @@ string_data = {
     "feat_name": "vls_com_pump",
     "plot_lab": "central pump energy",
     "unit": "eV",
-    "data_fname": "pumpProbe2021/results/ex_1_pump_pred/xgb_10_feat_pred.npz",
+    "data_fname": "PaperFigures/Figure Data/Figure 3/gb_pump.npz",
     "plot_fname": "pumpProbe2021/results/ex_1_pump_pred/xgb_low_pump_hist2d"
 }
 

@@ -83,6 +83,8 @@ def lin_feature_pipeline(data, string_data, pred_lims=False, legend=True, vmax=N
 
     train_out = y_train*out_ref.loc["train_std"]+out_ref.loc["train_mean"]
     train_pred = new_lin.predict(x_tr_filt)*out_ref.loc["train_std"]+out_ref.loc["train_mean"]
+    np.savez(string_data["data_fname"],
+             train_out=train_out, train_pred=train_pred, test_out=test_out, test_pred=test_pred)
 
     plot_lab = string_data["plot_lab"]
     unit = string_data["unit"]

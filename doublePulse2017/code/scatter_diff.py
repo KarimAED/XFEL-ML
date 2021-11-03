@@ -11,3 +11,4 @@ string_d = {
 }
 
 scatter_diff(d1, d2, string_d)
+#%%

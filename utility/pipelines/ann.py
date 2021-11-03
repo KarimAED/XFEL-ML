@@ -10,7 +10,7 @@ def ann_pipeline(data, string_data):
     print(input_reference)
     print(output_reference)
 
-    layers = neural_network.get_layers([50, 50, 20], "relu", "l2", 0, False)
+    layers = neural_network.get_layers([20, 20], "relu", "l2", 0, False)
 
     ann, hist = neural_network.fit_ann(x_train, y_train, layers, epochs=5_000, rate=0.001)
 
@@ -43,12 +43,12 @@ def ann_pipeline(data, string_data):
     return ann
 
 
-def ann_feature_pipeline(data, string_data, vmax=None, legend=True):
+def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=False):
     x_train, x_test, y_train, y_test, input_reference, output_reference = data
     print(input_reference)
     print(output_reference)
 
-    layers = neural_network.get_layers([50, 50, 20], "relu", "l2", 0, False)
+    layers = neural_network.get_layers([20, 20], "relu", "l2", 0, False)
 
     ann, hist = neural_network.fit_ann(x_train, y_train, layers, epochs=5_000, rate=0.001)
 
@@ -97,12 +97,15 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True):
     key_features = i_ref.columns[ranking][:10]
     key_feat_ind = ranking[:10]
 
-    print(key_features)
+    print(i_ref.columns[ranking].tolist())
+
+    if noRefit:
+        return i_ref.columns[ranking]
 
     x_tr_filt = x_train[:, key_feat_ind]
     x_te_filt = x_test[:, key_feat_ind]
 
-    layers = neural_network.get_layers([50, 50, 20], "relu", "l2", 0, False)
+    layers = neural_network.get_layers([20, 20], "relu", "l2", 0, False)
     new_ann, hew_hist = neural_network.fit_ann(x_tr_filt, y_train, layers, epochs=5_000, rate=0.001)
 
     print(f"Training MAE: {new_ann.evaluate(x_tr_filt, y_train)[1]}")
@@ -138,4 +141,17 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True):
                           label,
                           f"Measured {xy_label} ({unit})", f"Predicted {xy_label} ({unit})",
                           string_data["plot_fname"], legend=legend)
+    label = "ANN; MAE: {}{}".format(round(new_ann.evaluate(x_te_filt, y_test)[1], 2), r"$\sigma$")
+
+    if vmax is not None:
+        plot_fit.plot_pvm(test_out, test_pred,
+                          label,
+                          f"Measured {xy_label} ({unit})", f"Predicted {xy_label} ({unit})",
+                          string_data["plot_fname"]+"_normed", vmax=vmax, legend=legend)
+    else:
+        plot_fit.plot_pvm(test_out, test_pred,
+                          label,
+                          f"Measured {xy_label} ({unit})", f"Predicted {xy_label} ({unit})",
+                          string_data["plot_fname"]+"_normed", legend=legend)
+
     return new_ann

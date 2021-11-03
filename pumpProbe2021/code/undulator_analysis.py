@@ -15,10 +15,10 @@ for i, label in enumerate(different_undulators_datasets):
 
     string_data = {
         "feat_name": "vls_com_probe",
-        "plot_lab": "Probe CoM",
+        "plot_lab": "central probe energy",
         "unit": "eV",
-        "data_fname": "pumpProbe2021/results/ex_3_undulator_vary/undulator_%s.npz" % str(i+1),
+        "data_fname": "PaperFigures/Figure Data/Figure 4_5/new_u%s.npz" % str(i+1),
         "plot_fname": "pumpProbe2021/results/ex_3_undulator_vary/probe_undulator_%s_hist2d" % str(i+1)
     }
 
-    ann_feature_pipeline(data, string_data)
+    ann_feature_pipeline(data, string_data, legend=False, vmax=19)
