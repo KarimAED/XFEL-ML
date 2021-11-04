@@ -40,7 +40,7 @@ def ann_pipeline(data, string_data):
                       f"Expected {label} ({unit})", f"Predicted {label} ({unit})",
                       string_data["plot_fname"])
 
-    return ann
+    return ann, hist
 
 
 def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=False):
@@ -50,7 +50,7 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=Fals
 
     layers = neural_network.get_layers([20, 20], "relu", "l2", 0, False)
 
-    ann, hist = neural_network.fit_ann(x_train, y_train, layers, epochs=5_000, rate=0.001)
+    ann, hist = neural_network.fit_ann(x_train, y_train, layers, epochs=2_500, rate=0.001)
 
     print(f"Training MAE: {ann.evaluate(x_train, y_train)[1]}")
     print(f"Testing MAE: {ann.evaluate(x_test, y_test)[1]}")
@@ -154,4 +154,4 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=Fals
                           f"Measured {xy_label} ({unit})", f"Predicted {xy_label} ({unit})",
                           string_data["plot_fname"]+"_normed", legend=legend)
 
-    return new_ann
+    return new_ann, key_features

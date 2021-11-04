@@ -8,8 +8,9 @@ def plot_feat_hist(feats, labels):
     ax = plt.subplot(111)
 
     ax.bar([i for i in range(len(labels))], feats/np.min(feats) - 1)
-    ax.set_ylabel(r"$P_i$")
-    ax.set_xlabel("i")
+    ax.set_yscale("log")
+    ax.set_ylabel(r"$I_j$")
+    ax.set_xlabel("j")
 
     plt.show()
 

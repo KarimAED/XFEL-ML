@@ -100,7 +100,7 @@ def format_outp():
 #%%
 
 
-def get_data(filterByCorr=False):
+def get_data(filter_by_corr=False, filter_cols=[]):
     inp_data, inp_labels = format_inp()
     output, output_labels = format_outp()
     double_inp = pd.DataFrame(data=inp_data, columns=inp_labels)
@@ -145,7 +145,11 @@ def get_data(filterByCorr=False):
     var_thresh = 10
     feat_columns = [c for c in delay_inp if len(np.unique(delay_inp[c])) > var_thresh]
     delay_inp = delay_inp[feat_columns]
-    if filterByCorr:
+
+    if filter_cols:
+        delay_inp = delay_inp[filter_cols]
+
+    if filter_by_corr:
         corr = spearmanr(delay_inp.values).correlation
 
         # Ensure the correlation matrix is symmetric

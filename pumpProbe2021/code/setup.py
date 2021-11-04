@@ -8,7 +8,8 @@ from scipy.stats import spearmanr
 from scipy.cluster import hierarchy
 from scipy.spatial.distance import squareform
 
-def get_pump_data(fname, split=0.15, include_probe=True, filterByCorr=False):
+
+def get_pump_data(fname, split=0.15, include_probe=True, filterByCorr=False, filter_cols=[]):
     pathname = f"pumpProbe2021/data/{fname}"
 
     inp_df = pd.DataFrame()
@@ -53,6 +54,8 @@ def get_pump_data(fname, split=0.15, include_probe=True, filterByCorr=False):
     var_thresh = 10
     feat_columns = [c for c in pump_inp if len(np.unique(pump_inp[c])) > var_thresh]
     pump_inp = pump_inp[feat_columns]
+    if filter_cols:
+        pump_inp = pump_inp[filter_cols]
     if filterByCorr:
         corr = spearmanr(pump_inp.values).correlation
 
@@ -99,7 +102,7 @@ def get_pump_data(fname, split=0.15, include_probe=True, filterByCorr=False):
     return train_test_norm(pump_inp, pump_out, split=split)
 
 
-def get_probe_data(fname, split=0.15, include_pump=True):
+def get_probe_data(fname, split=0.15, include_pump=True, filter_cols=[]):
     pathname = f"pumpProbe2021/data/{fname}"
 
     inp_df = pd.DataFrame()
@@ -144,28 +147,9 @@ def get_probe_data(fname, split=0.15, include_pump=True):
     var_thresh = 10
     feat_columns = [c for c in probe_inp if len(np.unique(probe_inp[c])) > var_thresh]
     probe_inp = probe_inp[feat_columns]
-    """
-    corr = spearmanr(probe_inp.values).correlation
 
-    # Ensure the correlation matrix is symmetric
-    corr = np.abs((corr + corr.T) / 2)
-    np.fill_diagonal(corr, 1)
-
-    # We convert the correlation matrix to a distance matrix before performing
-    # hierarchical clustering using Ward's linkage.
-    distance_matrix = 1 - np.abs(corr)
-    dist_linkage = hierarchy.ward(squareform(distance_matrix))
-    dendro = hierarchy.dendrogram(
-        dist_linkage, labels=[i for i in range(len(probe_inp.columns))], leaf_rotation=90
-    )
-    dendro_idx = np.arange(0, len(dendro["ivl"]))
-    cluster_ids = hierarchy.fcluster(dist_linkage, 1, criterion="distance")
-    cluster_id_to_feature_ids = defaultdict(list)
-    for idx, cluster_id in enumerate(cluster_ids):
-        cluster_id_to_feature_ids[cluster_id].append(idx)
-    selected_features = [v[0] for v in cluster_id_to_feature_ids.values()]
-    probe_inp = probe_inp[probe_inp.columns[selected_features]]
-    """
+    if filter_cols:
+        probe_inp = probe_inp[filter_cols]
     print(probe_inp.shape[1], "columns left.")
     print("Filtering MAD & Energy...")
     # Get mean absolute deviation of outputs

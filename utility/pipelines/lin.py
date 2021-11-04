@@ -100,3 +100,5 @@ def lin_feature_pipeline(data, string_data, pred_lims=False, legend=True, vmax=N
                           label,
                           f"Measured {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
                           string_data["plot_fname"], legend=legend, pred_lims=pred_lims)
+
+    return new_lin, key_features
