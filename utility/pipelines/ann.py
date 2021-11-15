@@ -74,8 +74,6 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=Fals
     feature_rank = pd.DataFrame({"features": excluded_features, "mae_score": scores, "feat_ind": excluded_index})
     feature_rank.sort_values("mae_score", inplace=True, ascending=False)
 
-    plot_features.plot_feat_hist(feature_rank["mae_score"].values, feature_rank["features"].values)
-
     ranking = feature_rank["feat_ind"].values
 
     scores = []
@@ -92,7 +90,7 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=Fals
         x_te_masked = np.stack(x_te_masked).T
         scores.append(ann.evaluate(x_te_masked, y_test)[1] * output_reference.loc['test_std', string_data["feat_name"]])
 
-    plot_features.plot_feat_cumulative(scores)
+    plot_features.plot_both(feature_rank["mae_score"].values, feature_rank["features"].values, scores)
 
     key_features = i_ref.columns[ranking][:10]
     key_feat_ind = ranking[:10]

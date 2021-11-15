@@ -6,8 +6,8 @@ d2 = "doublePulse2017/results/ex_1_ann_feat/ann_10_feat_pred.npz"
 string_d = {
     "quantity": "Delay",
     "unit": "fs",
-    "label_1": r"$N_{max}$",
-    "label_2": r"$N_{red}$",
+    "label_1": r"$M=101$",
+    "label_2": r"$M=10$",
 }
 
 scatter_diff(d1, d2, string_d)
