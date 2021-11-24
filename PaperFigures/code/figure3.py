@@ -1,7 +1,37 @@
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
+
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+# create colormap
+# ---------------
+
+# create a colormap that consists of
+# - 1/5 : custom colormap, ranging from white to the first color of the colormap
+# - 4/5 : existing colormap
+
+# set upper part: 4 * 256/4 entries
+upper = mpl.cm.Blues(np.arange(256)[256//3:])
+
+# set lower part: 1 * 256/4 entries
+# - initialize all entries to 1 to make sure that the alpha channel (4th column) is 1
+lower = np.ones((int(256/4), 4))
+# - modify the first three columns (RGB):
+#   range linearly between white (1,1,1) and the first color of the upper colormap
+for i in range(3):
+  lower[:, i] = np.linspace(1, upper[0, i], lower.shape[0])
+
+# combine parts of colormap
+cmap = np.vstack((lower, upper))
+
+# convert to matplotlib colormap
+cmap = mpl.colors.ListedColormap(cmap, name='myBlues', N=cmap.shape[0])
+
+#%%
 plt.style.use("PaperFigures/code/final.mplstyle")
+
+legend = False
 
 file_names = ["lin_delay.npz", "lin_pump.npz", "lin_probe.npz",
               "gb_delay.npz", "gb_pump.npz", "gb_probe.npz",
@@ -51,12 +81,12 @@ for i, fname in enumerate(file_names):
         y = np.append(y, e)
     plt.text(
         .1, .95,
-        "%s; MAE=%.2f%s" % (titles[i//3], mae, unit),
+        r"%s; $\mathcal{M}=%.2f%s$" % (titles[i//3], mae, unit),
         transform=ax.transAxes, va="top"
     )
 
-    hist = plt.hist2d(x, y, cmap="Reds", bins=100, vmax=19)
-    if i == 8:
+    hist = plt.hist2d(x, y, cmap=cmap, bins=50, vmax=45)
+    if i == 8 and legend:
         plt.colorbar(ax=ax)
     plt.plot(edges, edges, "k--")
 
