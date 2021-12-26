@@ -1,87 +1,44 @@
-sep=,
-0, vls_com_probe
-1, xgmd_rmsElectronSum
-2, xgmd_energy
-3, ebeam_ebeamL3Energy
-4, gmd_energy
-5, ebeam_ebeamUndPosX
-6, vls_width_probe
-7, ebeam_ebeamUndAngY
-8, ebeam_ebeamUndPosY
-9, ebeam_ebeamLTU450
-10, epics_sxrss_bend_bact
-11, ebeam_ebeamEnergyBC2
-12, epics_m2c4_vset
-13, epics_AT1K0_gas_photE
-14, ebeam_ebeamLTU250
-15, ebeam_ebeamCharge
-16, epics_Keithley_Sum
-17, epics_y_corr_und_39
-18, epics_y_corr_und_46
-19, xgmd_avgIntensity
-20, epics_m4c0_vset
-21, epics_m2c6_vset
-22, ebeam_ebeamXTCAVPhase
-23, xgmd_electron2BkgNoiseAvg
-24, epics_m0c3_vset
-25, ebeam_ebeamPkCurrBC2
-26, epics_MR1K4_yup
-27, epics_mbes_mcp_anode
-28, epics_MR3K4_y
-29, epics_y_corr_und_42
-30, xgmd_xpos
-31, xgmd_electron1BkgNoiseAvg
-32, epics_mbes_mcp_mesh
-33, epics_m3c0_vset
-34, gmd_avgIntensity
-35, epics_m2c3_vset
-36, epics_m0c6_vset
-37, epics_ebeam_energy_act
-38, ebeam_ebeamUndAngX
-39, epics_MR2K4_pitch
-40, ebeam_ebeamEnergyBC1
-41, epics_m4c1_vset
-42, epics_mbes_coil_bias
-43, epics_m4c2_vset
-44, ebeam_damageMask
-45, xgmd_ypos
-46, epics_m5c0_vset
-47, epics_y_corr_und_35
-48, epics_MR3K4_bender_ds
-49, epics_m2c1_vset
-50, epics_y_corr_und_37
-51, epics_y_corr_und_36
-52, epics_y_corr_und_38
-53, ebeam_ebeamDumpCharge
-54, epics_y_corr_und_43
-55, epics_y_corr_und_41
-56, epics_las_inj_MP1_att1
-57, epics_m3c1_vset
-58, gmd_rmsElectronSum
-59, epics_y_corr_und_44
-60, epics_m0c2_vset
-61, epics_MR2K4_bender_ds
-62, epics_m0c5_vset
-63, epics_MR1K4_pitch
-64, epics_m3c2_vset
-65, epics_MR3K4_pitch
-66, gmd_electron1BkgNoiseAvg
-67, gmd_electron2BkgNoiseAvg
-68, epics_m2c0_vset
-69, ebeam_ebeamXTCAVAmpl
-70, epics_m0c1_vset
-71, epics_MR2K4_bender_us
-72, epics_m0c4_vset
-73, epics_main_chamber_vac
-74, epics_m7c0_vset
-75, epics_m2c7_vset
-76, epics_m7c1_vset
-77, epics_y_corr_und_45
-78, ebeam_ebeamPkCurrBC1
-79, epics_MR1K4_xup
-80, epics_m2c2_vset
-81, epics_m0c0_vset
-82, epics_m3c3_vset
-83, epics_MR3K4_bender_us
-84, epics_m2c5_vset
-85, epics_y_corr_und_40
+Rank;Feature;Rank;Feature
+0; vls_com_probe;43; epics_m4c2_vset
+1; xgmd_rmsElectronSum;44; ebeam_damageMask
+2; xgmd_energy;45; xgmd_ypos
+3; ebeam_ebeamL3Energy;46; epics_m5c0_vset
+4; gmd_energy;47; epics_y_corr_und_35
+5; ebeam_ebeamUndPosX;48; epics_MR3K4_bender_ds
+6; vls_width_probe;49; epics_m2c1_vset
+7; ebeam_ebeamUndAngY;50; epics_y_corr_und_37
+8; ebeam_ebeamUndPosY;51; epics_y_corr_und_36
+9; ebeam_ebeamLTU450;52; epics_y_corr_und_38
+10; epics_sxrss_bend_bact;53; ebeam_ebeamDumpCharge
+11; ebeam_ebeamEnergyBC2;54; epics_y_corr_und_43
+12; epics_m2c4_vset;55; epics_y_corr_und_41
+13; epics_AT1K0_gas_photE;56; epics_las_inj_MP1_att1
+14; ebeam_ebeamLTU250;57; epics_m3c1_vset
+15; ebeam_ebeamCharge;58; gmd_rmsElectronSum
+16; epics_Keithley_Sum;59; epics_y_corr_und_44
+17; epics_y_corr_und_39;60; epics_m0c2_vset
+18; epics_y_corr_und_46;61; epics_MR2K4_bender_ds
+19; xgmd_avgIntensity;62; epics_m0c5_vset
+20; epics_m4c0_vset;63; epics_MR1K4_pitch
+21; epics_m2c6_vset;64; epics_m3c2_vset
+22; ebeam_ebeamXTCAVPhase;65; epics_MR3K4_pitch
+23; xgmd_electron2BkgNoiseAvg;66; gmd_electron1BkgNoiseAvg
+24; epics_m0c3_vset;67; gmd_electron2BkgNoiseAvg
+25; ebeam_ebeamPkCurrBC2;68; epics_m2c0_vset
+26; epics_MR1K4_yup;69; ebeam_ebeamXTCAVAmpl
+27; epics_mbes_mcp_anode;70; epics_m0c1_vset
+28; epics_MR3K4_y;71; epics_MR2K4_bender_us
+29; epics_y_corr_und_42;72; epics_m0c4_vset
+30; xgmd_xpos;73; epics_main_chamber_vac
+31; xgmd_electron1BkgNoiseAvg;74; epics_m7c0_vset
+32; epics_mbes_mcp_mesh;75; epics_m2c7_vset
+33; epics_m3c0_vset;76; epics_m7c1_vset
+34; gmd_avgIntensity;77; epics_y_corr_und_45
+35; epics_m2c3_vset;78; ebeam_ebeamPkCurrBC1
+36; epics_m0c6_vset;79; epics_MR1K4_xup
+37; epics_ebeam_energy_act;80; epics_m2c2_vset
+38; ebeam_ebeamUndAngX;81; epics_m0c0_vset
+39; epics_MR2K4_pitch;82; epics_m3c3_vset
+40; ebeam_ebeamEnergyBC1;83; epics_MR3K4_bender_us
+41; epics_m4c1_vset;84; epics_m2c5_vset
+42; epics_mbes_coil_bias;85; epics_y_corr_und_40
