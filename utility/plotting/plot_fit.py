@@ -1,3 +1,5 @@
+from deprecated import deprecated
+
 import numpy as np
 import matplotlib.pyplot as plt
 plt.style.use("./utility/plotting/styling.mplstyle")
@@ -5,6 +7,20 @@ from matplotlib.ticker import MaxNLocator
 
 
 def plot_pvm(y, pred, label, x_label, y_label, save_str="", legend=True, vmax=None, pred_lims=False):
+    """
+    Function to plot 2d-histogram of measurements (labels, x-axis) and predictions (y-axis)
+
+    :param y: 1d-array of float, labels
+    :param pred: 1d-array of float, predictions
+    :param label: str, legend title to use
+    :param x_label: str, x-axis label
+    :param y_label: str, y-axis label
+    :param save_str: str, filename for saving the figure
+    :param legend: bool, if a cbar legend should be shown
+    :param vmax: int, if a maximum value for the colormap is desired (for uniform figure look)
+    :param pred_lims: bool, if limits of prediction instead of labels should be used on y-axis
+    :return: None
+    """
     fig = plt.figure(figsize=(8, 8))
     ax = plt.subplot(111)
     edge_x = np.array([np.min(y), np.max(y)])
@@ -36,7 +52,18 @@ def plot_pvm(y, pred, label, x_label, y_label, save_str="", legend=True, vmax=No
         plt.savefig(save_str+".png")
 
 
+@deprecated("Use 2d-histogram instead")
 def plot_scatter(y, pred, label, x_label, y_label):
+    """
+    More primitive scatter plot to illustrate predictions vs measurements, deprecated.
+
+    :param y: 1d-array of float, labels
+    :param pred: 1d-array of float, predictions
+    :param label: str, legend title to use
+    :param x_label: str, x-axis label
+    :param y_label: str, y-axis label
+    :return: None
+    """
     plt.figure()
     x = np.array([np.min(y), np.max(y)])
     plt.plot(x, x, "k--")
@@ -51,18 +78,25 @@ def plot_scatter(y, pred, label, x_label, y_label):
 
 
 def plot_hist(hist):
+    """
+    Plots the history of the fitting across epochs(for ann)
+
+    :param hist: tf.keras.History object
+    :return: None
+    """
     plt.figure()
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
-    plt.plot(hist.history["loss"], label="Training loss")
-    plt.plot(hist.history["val_loss"], label="Validation loss")
+    plt.plot(hist.history["loss"], label="Training loss")  # plot loss
+    plt.plot(hist.history["val_loss"], label="Validation loss")  # plot loss on validation
     plt.legend()
     plt.show()
 
+    # we plot another figure for mae
     plt.figure()
     plt.xlabel("Epochs")
     plt.ylabel("MAE")
-    plt.plot(hist.history["mae"], label="Training MAE")
-    plt.plot(hist.history["val_mae"], label="Validation MAE")
+    plt.plot(hist.history["mae"], label="Training MAE")  # plot mae
+    plt.plot(hist.history["val_mae"], label="Validation MAE")  # plot validation mae
     plt.legend()
     plt.show()

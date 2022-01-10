@@ -5,7 +5,19 @@ from utility.estimators import grad_boost
 from utility.plotting import plot_fit, plot_features
 
 
-def gb_pipeline(data, string_data):
+def gb_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True):
+    """
+    Pipeline to extract data, fit a gb regressor and save + plot the results.
+
+    :param data: array-like, contains x_train, x_test, y_train, y_test, input_reference, output_reference,
+        as returned by data scripts
+    :param string_data: dict-like, contains strings as labels, filenames, etc.
+    :param save: bool, if the results are to be saved
+    :param plot: bool, if the results are to be plotted in a 2d-hist
+    :param vmax: int, vmax to use for the colorbar of the 2d-hist
+    :param legend: bool, if a colorbar legend should be displayed
+    :return: Estimator object
+    """
     x_train, x_test, y_train, y_test, input_reference, output_reference = data
 
     print(input_reference)
@@ -20,38 +32,48 @@ def gb_pipeline(data, string_data):
 
     out_ref = output_reference[string_data["feat_name"]]
 
-    test_out = y_test*out_ref.loc["test_std"]+out_ref.loc["test_mean"]
-    test_pred = predictions*out_ref.loc["test_std"]+out_ref.loc["test_mean"]
+    test_out = y_test * out_ref.loc["test_std"] + out_ref.loc["test_mean"]
+    test_pred = predictions * out_ref.loc["test_std"] + out_ref.loc["test_mean"]
 
-    train_out = y_train*out_ref.loc["train_std"]+out_ref.loc["train_mean"]
-    train_pred = xgb.predict(x_train)*out_ref.loc["train_std"]+out_ref.loc["train_mean"]
+    train_out = y_train * out_ref.loc["train_std"] + out_ref.loc["train_mean"]
+    train_pred = xgb.predict(x_train) * out_ref.loc["train_std"] + out_ref.loc["train_mean"]
 
-    np.savez(string_data["data_fname"],
-             train_out=train_out, train_pred=train_pred, test_out=test_out, test_pred=test_pred)
+    if save:
+        np.savez(string_data["data_fname"],
+                 train_out=train_out, train_pred=train_pred, test_out=test_out, test_pred=test_pred)
 
-    eval_mae = grad_boost.mae(xgb.predict(x_test), y_test)
+    if plot:
+        test_std = out_ref.loc['test_std']
 
-    plot_lab = string_data["plot_lab"]
-    unit = string_data["unit"]
+        plot_lab = string_data["plot_lab"]
+        unit = string_data["unit"]
 
-    plot_fit.plot_pvm(test_out, test_pred,
-                      f"GB; MAE: {round(eval_mae, 2)}{unit}",
-                      f"Expected {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
-                      string_data["plot_fname"])
+        label = "GB; MAE: {}{}".format(round(grad_boost.mae(xgb.predict(x_test), y_test) * test_std, 2), unit)
+        kwargs = {"legend": legend}
+        if vmax is not None:
+            kwargs["vmax"] = vmax
+        plot_fit.plot_pvm(test_out, test_pred,
+                          label,
+                          f"Measured {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
+                          string_data["plot_fname"], **kwargs)
 
     return xgb
 
 
 def gb_feature_pipeline(data, string_data, vmax=None, legend=False):
+    """
+    Pipeline used to fit a gb regressor and then perform feature selection, ranking features
+    and only using the top 10 features for refit.
+
+    :param data: array-like, contains x_train, x_test, y_train, y_test, input_reference, output_reference,
+        as returned by data scripts
+    :param string_data: dict-like, contains strings as labels, filenames, etc.
+    :param vmax: int, vmax to use for the colorbar of the 2d-hist
+    :param legend: bool, if a colorbar legend should be displayed
+    :return: returns refit estimator + top 10 features used in the refit
+    """
     x_train, x_test, y_train, y_test, input_reference, output_reference = data
-
-    print(input_reference)
-    print(output_reference)
-
-    xgb = grad_boost.fit_xgboost(x_train, y_train)
-
-    print(f"Training MAE: {grad_boost.mae(xgb.predict(x_train), y_train)}")
-    print(f"Testing MAE: {grad_boost.mae(xgb.predict(x_test), y_test)}")
+    xgb = gb_pipeline(data, string_data, plot=False, save=False, vmax=vmax, legend=legend)
 
     i_ref = input_reference
 
@@ -103,40 +125,12 @@ def gb_feature_pipeline(data, string_data, vmax=None, legend=False):
     x_tr_filt = x_train[:, key_feat_ind]
     x_te_filt = x_test[:, key_feat_ind]
 
-    new_xgb = grad_boost.fit_xgboost(x_tr_filt, y_train)
+    data_filtered = data.copy()
+    data_filtered[0] = x_tr_filt
+    data_filtered[1] = x_te_filt
+    data_filtered[4] = input_reference.iloc[:, key_feat_ind]
 
-    print(f"Training MAE: {grad_boost.mae(new_xgb.predict(x_tr_filt), y_train)}")
-    print(f"Testing MAE: {grad_boost.mae(new_xgb.predict(x_te_filt), y_test)}")
-
-    predictions = new_xgb.predict(x_te_filt)
-
-    out_ref = output_reference[string_data["feat_name"]]
-
-    test_out = y_test * out_ref.loc["test_std"] + out_ref.loc["test_mean"]
-    test_pred = predictions * out_ref.loc["test_std"] + out_ref.loc["test_mean"]
-
-    train_out = y_train * out_ref.loc["train_std"] + out_ref.loc["train_mean"]
-    train_pred = new_xgb.predict(x_tr_filt) * out_ref.loc["train_std"] + out_ref.loc["train_mean"]
-
-    np.savez(string_data["data_fname"],
-             train_out=train_out, train_pred=train_pred, test_out=test_out, test_pred=test_pred)
-
-    test_std = out_ref.loc['test_std']
-
-    plot_lab = string_data["plot_lab"]
-    unit = string_data["unit"]
-
-    label = "GB; MAE: {}{}".format(round(grad_boost.mae(new_xgb.predict(x_te_filt), y_test)*test_std, 2), unit)
-    if vmax is not None:
-        plot_fit.plot_pvm(test_out, test_pred,
-                          label,
-                          f"Measured {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
-                          string_data["plot_fname"], vmax=vmax, legend=legend)
-    else:
-        plot_fit.plot_pvm(test_out, test_pred,
-                          label,
-                          f"Measured {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
-                          string_data["plot_fname"], legend=legend)
+    new_xgb = gb_pipeline(data_filtered, string_data, vmax=vmax, legend=legend)
 
     return new_xgb, key_features
 

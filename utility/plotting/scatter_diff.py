@@ -4,6 +4,15 @@ plt.style.use("./utility/plotting/styling.mplstyle")
 
 
 def scatter_diff(data_1, data_2, string_args):
+    """
+    Plot a scatter plot to illustrate the difference between two different estimator predictions
+    (across training and test set)
+
+    :param data_1: str, filename of the first prediction data (.npz file)
+    :param data_2: str, filename of the second prediction data (.npz file)
+    :param string_args: dict-like, contains labels for plotting
+    :return: None
+    """
     print(f"Plotting scatter difference for {data_1} and {data_2}")
     all_feat_data = np.load(data_1)
     red_feat_data = np.load(data_2)
