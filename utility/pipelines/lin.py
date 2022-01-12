@@ -6,14 +6,11 @@ from utility.plotting import plot_features, plot_fit
 from utility.estimators import grad_boost
 
 
-def lin_feature_pipeline(data, string_data, pred_lims=False, legend=True, vmax=None):
+def lin_pipeline(data, string_data, plot=True, save=True, pred_lims=False, legend=True, vmax=None):
     x_train, x_test, y_train, y_test, inp_df, out_df = data
 
     print(inp_df)
     print(out_df)
-
-    input_reference = inp_df
-    output_reference = out_df
 
     lin_model = LinearRegression()
 
@@ -21,6 +18,13 @@ def lin_feature_pipeline(data, string_data, pred_lims=False, legend=True, vmax=N
 
     print(f"Training MAE: {grad_boost.mae(lin_model.predict(x_train), y_train)}")
     print(f"Testing MAE: {grad_boost.mae(lin_model.predict(x_test), y_test)}")
+    return lin_model
+
+
+def lin_feature_pipeline(data, string_data, pred_lims=False, legend=True, vmax=None):
+    x_train, x_test, y_train, y_test, input_reference, output_reference = data
+
+    lin_model = lin_pipeline(data, string_data, plot=False, save=False)  # if we don't plot, no need to pass other kwarg
 
     i_ref = input_reference
 
@@ -42,8 +46,6 @@ def lin_feature_pipeline(data, string_data, pred_lims=False, legend=True, vmax=N
     feature_rank = pd.DataFrame({"features": excluded_features, "mae_score": scores, "feat_ind": excluded_index})
     feature_rank.sort_values("mae_score", inplace=True, ascending=False)
 
-    plot_features.plot_feat_hist(feature_rank["mae_score"].values, feature_rank["features"].values)
-
     ranking = feature_rank["feat_ind"].values
 
     scores = []
@@ -61,7 +63,7 @@ def lin_feature_pipeline(data, string_data, pred_lims=False, legend=True, vmax=N
         scores.append(grad_boost.mae(lin_model.predict(x_te_masked), y_test)
                       *output_reference.loc['test_std', string_data["feat_name"]])
 
-    plot_features.plot_feat_cumulative(scores)
+    plot_features.plot_both(feature_rank["mae_score"].values, feature_rank["features"].values, scores)
 
     key_features = i_ref.columns[ranking][:10]
     key_feat_ind = ranking[:10]

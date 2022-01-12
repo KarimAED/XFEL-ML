@@ -17,6 +17,7 @@ keras-tuner = "^1.0.2"
 matplotlib = "^3.3.4"
 xgboost = "^1.4.2"
 Deprecated = "^1.2.12"
+jupyter = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 

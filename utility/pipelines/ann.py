@@ -3,6 +3,7 @@ import pandas as pd
 
 from utility.estimators import neural_network
 from utility.plotting import plot_fit, plot_features
+from utility.pipelines import permute as perm
 
 
 def ann_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True):
@@ -99,44 +100,46 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=Fals
     # set up everything to rank features
     i_ref = input_reference
     scores = []
-    excluded_features = []
-    excluded_index = []
+    permuted_features = []
+    permuted_index = []
 
     # loop over all features one by oneto exclude them
     for i in range(len(i_ref.columns)):
-        x_te_masked = []
-        for j in range(len(i_ref.columns)):
-            if j != i:
-                x_te_masked.append(x_test[:, j])
-            elif j == i:  # filter feature to be checked (set to 0)
-                x_te_masked.append(np.zeros(x_test.shape[0]))
-        x_te_masked = np.stack(x_te_masked).T
-        excluded_features.append(i_ref.columns[i])
-        excluded_index.append(i)
+        score = 0
+        for k in range(5):  # average over 5 permutations
+            x_te_masked = perm.permute(x_test, i, i_ref)
+            score += ann.evaluate(x_te_masked, y_test)[1] / 5
+        permuted_features.append(i_ref.columns[i])
+        permuted_index.append(i)
         # evaluate estimator performance with one feature scrambled (on test set)
-        scores.append(ann.evaluate(x_te_masked, y_test)[1])
+        scores.append(score)
 
     # get data frame ranking all features
-    feature_rank = pd.DataFrame({"features": excluded_features, "mae_score": scores, "feat_ind": excluded_index})
+    feature_rank = pd.DataFrame({"features": permuted_features, "mae_score": scores, "feat_ind": permuted_index})
     feature_rank.sort_values("mae_score", inplace=True, ascending=False)  # sort data frame by feature importance
 
     ranking = feature_rank["feat_ind"].values
 
+    print(i_ref.columns[ranking].tolist())
+
+    # return all features ranked if not to refit
+    if noRefit:
+        return i_ref.columns[ranking]
+
     scores = []
 
-    # loop over all features again, including only the top x features but using the old estimator
-    for l in range(len(ranking)):
+    # loop over all features again, including only the top x features and refitting the estimator for each of them
+    for l in range(0, len(ranking), 5):
         feats = ranking[:l + 1]
-        x_te_masked = []
-        for j in range(len(i_ref.columns)):
-            if j in feats:
-                x_te_masked.append(x_test[:, j])
-            else:
-                rng = np.random.default_rng(1)
-                x_te_masked.append(rng.permutation(x_test[:, j]))
-        x_te_masked = np.stack(x_te_masked).T
+        x_tr = x_train[:, feats]
+        x_te = x_test[:, feats]
+        data_temp = list(data)
+        data_temp[0] = x_tr
+        data_temp[1] = x_te
+        data_temp[4] = input_reference.iloc[:, feats]
+        temp_ann, temp_hist = ann_pipeline(data_temp, string_data, save=False, plot=False)
         # collect scores with top x features included
-        scores.append(ann.evaluate(x_te_masked, y_test)[1] * output_reference.loc['test_std', string_data["feat_name"]])
+        scores.append(temp_ann.evaluate(x_te, y_test)[1] * output_reference.loc['test_std', string_data["feat_name"]])
 
     # plot feature importance and mae score with features up to feature j on one plot
     plot_features.plot_both(feature_rank["mae_score"].values, feature_rank["features"].values, scores)
@@ -145,17 +148,11 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=Fals
     key_features = i_ref.columns[ranking][:10]
     key_feat_ind = ranking[:10]
 
-    print(i_ref.columns[ranking].tolist())
-
-    # return all features ranked if not to refit
-    if noRefit:
-        return i_ref.columns[ranking]
-
     # filter out only the top features
     x_tr_filt = x_train[:, key_feat_ind]
     x_te_filt = x_test[:, key_feat_ind]
 
-    data_filtered = data.copy()
+    data_filtered = list(data)
     data_filtered[0] = x_tr_filt
     data_filtered[1] = x_te_filt
     data_filtered[4] = input_reference.iloc[:, key_feat_ind]

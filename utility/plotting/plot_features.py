@@ -63,7 +63,7 @@ def plot_both(feats, labels, vals):
 
     ax = ax1.twinx()  # on the same x-axis
 
-    ax.plot(vals, color="b")  # plot mae of cumulative features included
+    ax.plot([i for i in range(len(labels))][::5], vals, color="b")  # plot mae of cumulative features included
     ax.tick_params(axis='y', colors='b')
     ax.yaxis.label.set_color('b')
     ax.set_ylabel(r"$\mathcal{M}$(j)")

@@ -1,4 +1,5 @@
 import os
+import logging
 
 import numpy as np
 import pandas as pd
@@ -10,17 +11,21 @@ from scipy.stats import spearmanr
 from scipy.cluster import hierarchy
 from scipy.spatial.distance import squareform
 
+# set parameters to load double pulse data
 source = os.path.join(os.getcwd(), "doublePulse2017/data")
-files = os.listdir(source)
+files = sorted(os.listdir(source))
 split = 0.15
 
-
-# print(files)
-
-#%%
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def format_inp():
+    """
+    Function to collect all data used for input features and format it properly.
+
+    :return: tuple of 2d-array + 1d-array, corresponding to feature data & names respectively
+    """
     # init empty placeholders
     ebeam_labels = []
     ebeam_data = []
@@ -59,10 +64,13 @@ def format_inp():
     inp_data = np.append(temp_data, gmd_data, axis=1)
     return inp_data, inp_labels
 
-#%%
-
 
 def format_outp():
+    """
+    Function to collect all data used for output labels and format it properly.
+
+    :return: tuple of 2d-array + 1d-array, corresponding to label data & names respectively
+    """
     # initialise output features
     delay_data = []
     delay_labels = []
@@ -97,10 +105,15 @@ def format_outp():
     output_labels = delay_labels + tof_labels
     return output, output_labels
 
-#%%
-
 
 def get_data(filter_by_corr=False, filter_cols=[]):
+    """
+    Function to collect both input and output data for doublePulse2017, and format the data.
+
+    :param filter_by_corr: bool, if highly correlated input features should be removed
+    :param filter_cols: array-like of str, manually select only a few columns to be included
+    :return: array-like, contains x_train, x_test, y_train, y_test, input_reference, output_reference
+    """
     inp_data, inp_labels = format_inp()
     output, output_labels = format_outp()
     double_inp = pd.DataFrame(data=inp_data, columns=inp_labels)
