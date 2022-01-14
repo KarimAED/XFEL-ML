@@ -1,12 +1,19 @@
+import logging
 import numpy as np
 import pandas as pd
 
 from utility.estimators import neural_network
 from utility.plotting import plot_fit, plot_features
-from utility.pipelines import permute as perm
+from utility.pipelines import helpers
+
+logger = logging.getLogger("pipelines")
 
 
-def ann_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True):
+def info():
+    logger.info("Test")
+
+
+def ann_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True, verbose=2):
     """
     Pipeline to extract data, fit an ann and save + plot the results.
 
@@ -31,7 +38,7 @@ def ann_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True
     layers = neural_network.get_layers([20, 20], "relu", "l2", 0, False)
 
     # fit ann with data and params, save history also
-    ann, hist = neural_network.fit_ann(x_train, y_train, layers, epochs=5_000, rate=0.001)
+    ann, hist = neural_network.fit_ann(x_train, y_train, layers, epochs=5_000, rate=0.001, verbose=verbose)
 
     # print training and testing mean absolute error (KPMs), both are printed to inform about potential overfitting
     print(f"Training MAE: {ann.evaluate(x_train, y_train)[1]}")
@@ -39,16 +46,14 @@ def ann_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True
 
     # make predictions on the test set
     predictions = ann.predict(x_test).T[0]
+    pred_train = ann.predict(x_train).T[0]
 
-    # get the relevant column from the output reference
-    out_ref = output_reference[string_data["feat_name"]]
-
-    # return targets & predictions to original units
-    test_out = y_test * out_ref.loc["test_std"] + out_ref.loc["test_mean"]
-    test_pred = predictions * out_ref.loc["test_std"] + out_ref.loc["test_mean"]
-
-    train_out = y_train * out_ref.loc["train_std"] + out_ref.loc["train_mean"]
-    train_pred = ann.predict(x_train).T[0] * out_ref.loc["train_std"] + out_ref.loc["train_mean"]
+    out_ref, train_out, test_out, train_pred, test_pred = helpers.rescale_output(string_data["feat_name"],
+                                                                                 output_reference,
+                                                                                 y_train,
+                                                                                 y_test,
+                                                                                 pred_train,
+                                                                                 predictions)
 
     # file is not saved for e.g. the first step in the feature selection pipeline
     if save:
@@ -107,7 +112,7 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=Fals
     for i in range(len(i_ref.columns)):
         score = 0
         for k in range(5):  # average over 5 permutations
-            x_te_masked = perm.permute(x_test, i, i_ref)
+            x_te_masked = helpers.permute(x_test, i)
             score += ann.evaluate(x_te_masked, y_test)[1] / 5
         permuted_features.append(i_ref.columns[i])
         permuted_index.append(i)
@@ -130,32 +135,20 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=Fals
 
     # loop over all features again, including only the top x features and refitting the estimator for each of them
     for l in range(0, len(ranking), 5):
-        feats = ranking[:l + 1]
-        x_tr = x_train[:, feats]
-        x_te = x_test[:, feats]
-        data_temp = list(data)
-        data_temp[0] = x_tr
-        data_temp[1] = x_te
-        data_temp[4] = input_reference.iloc[:, feats]
-        temp_ann, temp_hist = ann_pipeline(data_temp, string_data, save=False, plot=False)
+        print("Refitting with the top %i / %i feats" % (l+1, len(ranking)))
+        data_temp = helpers.top_x_data(data, ranking, l)
+        temp_ann, temp_hist = ann_pipeline(data_temp, string_data, save=False, plot=False, verbose=0)
         # collect scores with top x features included
-        scores.append(temp_ann.evaluate(x_te, y_test)[1] * output_reference.loc['test_std', string_data["feat_name"]])
+        scores.append(temp_ann.evaluate(data_temp[1], y_test)[1]
+                      * output_reference.loc['test_std', string_data["feat_name"]])
 
     # plot feature importance and mae score with features up to feature j on one plot
     plot_features.plot_both(feature_rank["mae_score"].values, feature_rank["features"].values, scores)
 
     # select top 10 features as key features
     key_features = i_ref.columns[ranking][:10]
-    key_feat_ind = ranking[:10]
 
-    # filter out only the top features
-    x_tr_filt = x_train[:, key_feat_ind]
-    x_te_filt = x_test[:, key_feat_ind]
-
-    data_filtered = list(data)
-    data_filtered[0] = x_tr_filt
-    data_filtered[1] = x_te_filt
-    data_filtered[4] = input_reference.iloc[:, key_feat_ind]
+    data_filtered = helpers.top_x_data(data, ranking, 10)
 
     # refit estimator with top features
     new_ann, hist = ann_pipeline(data_filtered, string_data, vmax=vmax, legend=legend)

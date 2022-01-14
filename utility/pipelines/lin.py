@@ -4,6 +4,7 @@ from sklearn.linear_model import LinearRegression
 
 from utility.plotting import plot_features, plot_fit
 from utility.estimators import grad_boost
+from utility.pipelines import helpers
 
 
 def lin_pipeline(data, string_data, plot=True, save=True, pred_lims=False, legend=True, vmax=None):
@@ -16,12 +17,40 @@ def lin_pipeline(data, string_data, plot=True, save=True, pred_lims=False, legen
 
     lin_model.fit(x_train, y_train)
 
-    print(f"Training MAE: {grad_boost.mae(lin_model.predict(x_train), y_train)}")
-    print(f"Testing MAE: {grad_boost.mae(lin_model.predict(x_test), y_test)}")
+    print(f"Training MAE: {helpers.mae(lin_model.predict(x_train), y_train)}")
+    print(f"Testing MAE: {helpers.mae(lin_model.predict(x_test), y_test)}")
+
+    predictions = lin_model.predict(x_test)
+    pred_train = lin_model.predict(x_train)
+
+    out_ref, train_out, test_out, train_pred, test_pred = helpers.rescale_output(string_data["feat_name"],
+                                                                                 out_df,
+                                                                                 y_train,
+                                                                                 y_test,
+                                                                                 pred_train,
+                                                                                 predictions)
+
+    if save:
+        np.savez(string_data["data_fname"],
+                 train_out=train_out, train_pred=train_pred, test_out=test_out, test_pred=test_pred)
+
+    if plot:
+        plot_lab = string_data["plot_lab"]
+        unit = string_data["unit"]
+        label = "LIN; MAE: {}{}".format(
+            round(helpers.mae(lin_model.predict(x_test), y_test) * out_ref["test_std"], 2), unit)
+
+        kwargs = {"pred_lims": pred_lims, "legend": legend}
+        if vmax is not None:
+            kwargs["vmax"] = vmax
+        plot_fit.plot_pvm(test_out, test_pred,
+                          label,
+                          f"Measured {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
+                          string_data["plot_fname"], **kwargs)
     return lin_model
 
 
-def lin_feature_pipeline(data, string_data, pred_lims=False, legend=True, vmax=None):
+def lin_feature_pipeline(data, string_data, pred_lims=False, legend=True, vmax=None, noRefit=False):
     x_train, x_test, y_train, y_test, input_reference, output_reference = data
 
     lin_model = lin_pipeline(data, string_data, plot=False, save=False)  # if we don't plot, no need to pass other kwarg
@@ -29,78 +58,43 @@ def lin_feature_pipeline(data, string_data, pred_lims=False, legend=True, vmax=N
     i_ref = input_reference
 
     scores = []
-    excluded_features = []
-    excluded_index = []
-    for i in range(len(i_ref.columns)):
-        x_te_masked = []
-        for j in range(len(i_ref.columns)):
-            if j != i:
-                x_te_masked.append(x_test[:, j])
-            elif j == i:
-                x_te_masked.append(np.zeros(x_test.shape[0]))
-        x_te_masked = np.stack(x_te_masked).T
-        excluded_features.append(i_ref.columns[i])
-        excluded_index.append(i)
-        scores.append(grad_boost.mae(lin_model.predict(x_te_masked), y_test))
+    permuted_features = []
+    permuted_index = []
 
-    feature_rank = pd.DataFrame({"features": excluded_features, "mae_score": scores, "feat_ind": excluded_index})
+    # loop over all features one by oneto exclude them
+    for i in range(len(i_ref.columns)):
+        score = 0
+        for k in range(5):  # average over 5 permutations
+            x_te_masked = helpers.permute(x_test, i)
+            score += helpers.mae(lin_model.predict(x_te_masked), y_test) / 5
+        permuted_features.append(i_ref.columns[i])
+        permuted_index.append(i)
+        # evaluate estimator performance with one feature scrambled (on test set)
+        scores.append(score)
+
+    feature_rank = pd.DataFrame({"features": permuted_features, "mae_score": scores, "feat_ind": permuted_index})
     feature_rank.sort_values("mae_score", inplace=True, ascending=False)
 
     ranking = feature_rank["feat_ind"].values
 
+    if noRefit:
+        return i_ref.columns[ranking]
+
     scores = []
 
-    for l in range(len(ranking)):
-        feats = ranking[:l + 1]
-        x_te_masked = []
-        for j in range(len(i_ref.columns)):
-            if j in feats:
-                x_te_masked.append(x_test[:, j])
-            else:
-                rng = np.random.default_rng(1)
-                x_te_masked.append(rng.permutation(x_test[:, j]))
-        x_te_masked = np.stack(x_te_masked).T
-        scores.append(grad_boost.mae(lin_model.predict(x_te_masked), y_test)
-                      *output_reference.loc['test_std', string_data["feat_name"]])
+    for l in range(0, len(ranking), 5):
+        data_temp = helpers.top_x_data(data, ranking, l)
+        temp_lin = lin_pipeline(data_temp, string_data, save=False, plot=False)
+        # collect scores with top x features included
+        scores.append(helpers.mae(temp_lin.predict(data_temp[1]), y_test)
+                      * output_reference.loc['test_std', string_data["feat_name"]])
 
     plot_features.plot_both(feature_rank["mae_score"].values, feature_rank["features"].values, scores)
 
     key_features = i_ref.columns[ranking][:10]
-    key_feat_ind = ranking[:10]
 
-    print(key_features)
+    data_filtered = helpers.top_x_data(data, ranking, 10)
 
-    x_tr_filt = x_train[:, key_feat_ind]
-    x_te_filt = x_test[:, key_feat_ind]
-
-    new_lin = LinearRegression()
-    new_lin.fit(x_tr_filt, y_train)
-
-    predictions = new_lin.predict(x_te_filt)
-
-    out_ref = output_reference[string_data["feat_name"]]
-
-    test_out = y_test*out_ref.loc["test_std"]+out_ref.loc["test_mean"]
-    test_pred = predictions*out_ref.loc["test_std"]+out_ref.loc["test_mean"]
-
-    train_out = y_train*out_ref.loc["train_std"]+out_ref.loc["train_mean"]
-    train_pred = new_lin.predict(x_tr_filt)*out_ref.loc["train_std"]+out_ref.loc["train_mean"]
-    np.savez(string_data["data_fname"],
-             train_out=train_out, train_pred=train_pred, test_out=test_out, test_pred=test_pred)
-
-    plot_lab = string_data["plot_lab"]
-    unit = string_data["unit"]
-    label = "LIN; MAE: {}{}".format(round(grad_boost.mae(lin_model.predict(x_test), y_test)*out_ref["test_std"], 2), unit)
-
-    if vmax is not None:
-        plot_fit.plot_pvm(test_out, test_pred,
-                          label,
-                          f"Measured {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
-                          string_data["plot_fname"], vmax=vmax, legend=legend, pred_lims=pred_lims)
-    else:
-        plot_fit.plot_pvm(test_out, test_pred,
-                          label,
-                          f"Measured {plot_lab} ({unit})", f"Predicted {plot_lab} ({unit})",
-                          string_data["plot_fname"], legend=legend, pred_lims=pred_lims)
+    new_lin = lin_pipeline(data_filtered, string_data, pred_lims=pred_lims, legend=legend, vmax=vmax)
 
     return new_lin, key_features

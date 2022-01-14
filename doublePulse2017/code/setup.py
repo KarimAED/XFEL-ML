@@ -16,8 +16,7 @@ source = os.path.join(os.getcwd(), "doublePulse2017/data")
 files = sorted(os.listdir(source))
 split = 0.15
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger("old_data")
 
 
 def format_inp():
@@ -26,6 +25,7 @@ def format_inp():
 
     :return: tuple of 2d-array + 1d-array, corresponding to feature data & names respectively
     """
+    logger.info("Getting inputs from %i files." % len(files))
     # init empty placeholders
     ebeam_labels = []
     ebeam_data = []
@@ -62,6 +62,9 @@ def format_inp():
     inp_labels = [str(label, "utf-8") for label in labels]
     temp_data = np.append(ebeam_data, epic_data, axis=1)
     inp_data = np.append(temp_data, gmd_data, axis=1)
+    logger.info("input labels: %s" % str(inp_labels))
+    logger.info("input shape: %s" % str(inp_data.shape))
+
     return inp_data, inp_labels
 
 
@@ -71,6 +74,7 @@ def format_outp():
 
     :return: tuple of 2d-array + 1d-array, corresponding to label data & names respectively
     """
+    logger.info("Getting outputs from %i files." % len(files))
     # initialise output features
     delay_data = []
     delay_labels = []
@@ -103,6 +107,9 @@ def format_outp():
 
     output = np.append(delay_data, tof_data, axis=1)
     output_labels = delay_labels + tof_labels
+    logger.info("output labels: %s" % str(output_labels))
+    logger.info("output shape: %s" % str(output.shape))
+
     return output, output_labels
 
 

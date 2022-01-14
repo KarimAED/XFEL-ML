@@ -11,12 +11,6 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-# Helper function to evaluate mean absolute error (mae of two numpy arrays)
-def mae(x, y):
-    logger.info("Called MAE")
-    return np.mean(np.abs(x-y))
-
-
 @deprecated("The histogram gradient boosting regressor is experimental and should not be used.")
 def fit_grad_boost(x_tr, y_tr, reg=1, lr=0.1, iterations=1000, samples=20, leaves=31):
     """

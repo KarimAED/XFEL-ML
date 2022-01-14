@@ -1,0 +1,50 @@
+version: 1
+logfile: REPLACE_ME
+disable_existing_loggers: false
+handlers:
+  console:
+    class : logging.StreamHandler
+    formatter: brief
+    level   : WARNING
+    stream  : ext://sys.stderr
+  file:
+    class : logging.FileHandler
+    formatter: precise
+    filename: cfg://logfile
+
+formatters:
+  brief:
+    format: '[%(levelname)-8s] %(name)-15s %(message)s'
+  precise:
+    format: '[%(levelname)-8s] %(asctime)s %(name)-15s %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+
+root:
+  level: NOTSET
+  handlers: [console, file]
+
+loggers:
+  estimators:
+    level: NOTSET
+    propagate: 0
+    handlers: [ console, file ]
+  pipelines:
+    level: NOTSET
+    propagate: 0
+    handlers: [ console, file ]
+  plotting:
+    level: NOTSET
+    propagate: 0
+    handlers: [ console, file ]
+  general_util:
+    level: NOTSET
+    propagate: 0
+    handlers: [ console, file ]
+  old_data:
+    level: NOTSET
+    propagate: 0
+    handlers: [ console, file ]
+  new_data:
+    level: NOTSET
+    propagate: 0
+    handlers: [ console, file ]

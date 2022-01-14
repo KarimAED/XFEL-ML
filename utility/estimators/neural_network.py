@@ -99,7 +99,7 @@ def ann(layer_list, out_shape, loss, opt):
     return model
 
 
-def fit_ann(x_tr, y_tr, layer_list, rate=0.0015, loss="mae", epochs=3_000, validation_split=0.15, batch_size=1_000):
+def fit_ann(x_tr, y_tr, layer_list, rate=0.0015, loss="mae", epochs=3_000, validation_split=0.15, batch_size=1_000, verbose=2):
     """
     Function to generate and fit an ann with the given parameters and data.
 
@@ -126,6 +126,6 @@ def fit_ann(x_tr, y_tr, layer_list, rate=0.0015, loss="mae", epochs=3_000, valid
 
     # fit estimator and store history
     hist = est.fit(x_tr, y_tr, batch_size,
-                   epochs=epochs, verbose=2,
+                   epochs=epochs, verbose=verbose,
                    validation_split=validation_split)
     return est, hist

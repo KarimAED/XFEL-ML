@@ -69,6 +69,6 @@ def plot_both(feats, labels, vals):
     ax.set_ylabel(r"$\mathcal{M}$(j)")
     ax.spines['right'].set_color('b')
 
-    plt.show()
     plt.tight_layout()
     plt.savefig("feat_sel.png")
+    plt.show()
