@@ -20,6 +20,7 @@ Deprecated = "^1.2.12"
 jupyter = "^1.0.0"
 pytest = "^6.2.5"
 PyYAML = "^6.0"
+ipywidgets = "^7.6.5"
 
 [tool.poetry.dev-dependencies]
 

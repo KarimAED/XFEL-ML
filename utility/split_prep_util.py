@@ -13,8 +13,18 @@ def norm(data, ref, label):
     :param label: str, the label to use for the index of the ref df
     :return: np.array, normalised version of data
     """
+    assert type(data) == np.ndarray, "norm: data must be np.ndarray"
+    assert len(data.shape) in (1, 2), "norm: data dimensionality not 1 or 2"
+    assert np.issubdtype(data.dtype, np.number), "norm: non-numeric data"
+    assert type(ref) == pd.DataFrame, "norm: ref must be pd.DataFrame"
+    assert type(label) == str, "norm: label must be string"
+    assert data.shape[1] == len(ref.columns), "norm: number of columns in ref and data must match"
+
     data_mean = pd.Series(data=np.mean(data, axis=0), index=ref.columns, name=label + "_mean", dtype=np.double)
     data_std = pd.Series(data=np.std(data, axis=0), index=ref.columns, name=label + "_std", dtype=np.double)
+
+    assert np.all(data_std.values != 0), "norm: data has 0 std"
+
     ref = ref.append(data_mean)
     ref = ref.append(data_std)
 

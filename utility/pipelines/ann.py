@@ -9,10 +9,6 @@ from utility.pipelines import helpers
 logger = logging.getLogger("pipelines")
 
 
-def info():
-    logger.info("Test")
-
-
 def ann_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True, verbose=2):
     """
     Pipeline to extract data, fit an ann and save + plot the results.
@@ -26,13 +22,15 @@ def ann_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True
     :param legend: bool, if a colorbar legend should be displayed
     :return: tuple of Estimator and History objects
     """
+    print("Starting ann training...")
+    logger.info("Fitting ANN on data...")
 
     # unpack data
     x_train, x_test, y_train, y_test, input_reference, output_reference = data
 
     # print the reference values (std and mean used for normalization)
-    print(input_reference)
-    print(output_reference)
+    logger.info(input_reference)
+    logger.info(output_reference)
 
     # generate layer list
     layers = neural_network.get_layers([20, 20], "relu", "l2", 0, False)
@@ -112,8 +110,9 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=Fals
     for i in range(len(i_ref.columns)):
         score = 0
         for k in range(5):  # average over 5 permutations
+            print("feature %i / %i; permutation %i / 5" % (i + 1, len(i_ref.columns), k), end="\r")
             x_te_masked = helpers.permute(x_test, i)
-            score += ann.evaluate(x_te_masked, y_test)[1] / 5
+            score += ann.evaluate(x_te_masked, y_test, verbose=0)[1] / 5
         permuted_features.append(i_ref.columns[i])
         permuted_index.append(i)
         # evaluate estimator performance with one feature scrambled (on test set)
@@ -125,7 +124,7 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=Fals
 
     ranking = feature_rank["feat_ind"].values
 
-    print(i_ref.columns[ranking].tolist())
+    logger.info(i_ref.columns[ranking].tolist())
 
     # return all features ranked if not to refit
     if noRefit:
@@ -135,7 +134,7 @@ def ann_feature_pipeline(data, string_data, vmax=None, legend=True, noRefit=Fals
 
     # loop over all features again, including only the top x features and refitting the estimator for each of them
     for l in range(0, len(ranking), 5):
-        print("Refitting with the top %i / %i feats" % (l+1, len(ranking)))
+        print("Refitting with the top %i / %i feats" % (l+1, len(ranking)), end="\r")
         data_temp = helpers.top_x_data(data, ranking, l)
         temp_ann, temp_hist = ann_pipeline(data_temp, string_data, save=False, plot=False, verbose=0)
         # collect scores with top x features included
