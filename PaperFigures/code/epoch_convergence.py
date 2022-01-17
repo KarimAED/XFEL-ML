@@ -1,13 +1,12 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import time as t
-from doublePulse2017.code.setup import get_data
-from pumpProbe2021.code.setup import get_pump_data
+from oldMode2017.setup import get_data
+from newMode2021.code.setup import get_pump_data
 
 from utility.pipelines import ann
 
-for_delay = False
-filter_cols = False
+for_delay = True
+filter_cols = True
 
 #%%
 
@@ -48,12 +47,16 @@ e = t.time()
 print("Fitting duration: %.2fs" % (e-s))
 
 #%%
+import matplotlib
+matplotlib.style.use("./utility/plotting/styling.mplstyle")
 
 plt.figure(figsize=(10, 10))
 plt.xlabel("Epochs")
-plt.ylabel("MAE")
-plt.plot(hist.history["mae"], label="Training MAE")
-plt.plot(hist.history["val_mae"], label="Validation MAE")
+plt.ylabel(r"$\mathcal{M}$ (normalised with variance)")
+plt.plot(hist.history["mae"], label=r"Training $\mathcal{M}$")
+plt.plot(hist.history["val_mae"], label=r"Validation $\mathcal{M}$")
 plt.legend()
 plt.show()
-plt.savefig("PaperFigures/epochConv/pump_allFeats.png")
+plt.savefig("PaperFigures/pump_allFeats.png")
+
+

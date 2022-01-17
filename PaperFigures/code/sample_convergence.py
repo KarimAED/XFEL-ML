@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from doublePulse2017.code.setup import get_data
-from pumpProbe2021.code.setup import get_pump_data
-from utility.estimators import grad_boost
+from oldMode2017.setup import get_data
+from newMode2021.code.setup import get_pump_data
+from utility.helpers import mae
+
 
 from utility.pipelines import ann, gb, lin
 
@@ -57,10 +58,10 @@ for i in range(1, n_steps+1):
 
     mae_i.append(ann_est.evaluate(x_train[:i*step_size], y_train[:i*step_size])[1])
     mae_i.append(ann_est.evaluate(x_test, y_test)[1])
-    mae_i.append(grad_boost.mae(lin_est.predict(x_train[:i*step_size]), y_train[:i*step_size]))
-    mae_i.append(grad_boost.mae(lin_est.predict(x_test), y_test))
-    mae_i.append(grad_boost.mae(gb_est.predict(x_train[:i*step_size]), y_train[:i*step_size]))
-    mae_i.append(grad_boost.mae(gb_est.predict(x_test), y_test))
+    mae_i.append(mae(lin_est.predict(x_train[:i*step_size]), y_train[:i*step_size]))
+    mae_i.append(mae(lin_est.predict(x_test), y_test))
+    mae_i.append(mae(gb_est.predict(x_train[:i*step_size]), y_train[:i*step_size]))
+    mae_i.append(mae(gb_est.predict(x_test), y_test))
 
     all_maes.append(mae_i)
 

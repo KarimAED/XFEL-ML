@@ -18,7 +18,10 @@ def norm(data, ref, label):
     assert np.issubdtype(data.dtype, np.number), "norm: non-numeric data"
     assert type(ref) == pd.DataFrame, "norm: ref must be pd.DataFrame"
     assert type(label) == str, "norm: label must be string"
-    assert data.shape[1] == len(ref.columns), "norm: number of columns in ref and data must match"
+    if len(ref.columns) > 1:
+        assert data.shape[1] == len(ref.columns), "norm: number of columns in ref and data must match"
+    else:
+        assert len(data.shape) == 1, "norm: number of columns in ref and data must match"
 
     data_mean = pd.Series(data=np.mean(data, axis=0), index=ref.columns, name=label + "_mean", dtype=np.double)
     data_std = pd.Series(data=np.std(data, axis=0), index=ref.columns, name=label + "_std", dtype=np.double)

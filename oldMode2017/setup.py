@@ -12,7 +12,7 @@ from scipy.cluster import hierarchy
 from scipy.spatial.distance import squareform
 
 # set parameters to load double pulse data
-source = os.path.join(os.getcwd(), "doublePulse2017/data")
+source = os.path.join(os.getcwd(), "oldMode2017/data")
 files = sorted(os.listdir(source))
 split = 0.15
 
@@ -115,7 +115,7 @@ def format_outp():
 
 def get_data(filter_by_corr=False, filter_cols=[]):
     """
-    Function to collect both input and output data for doublePulse2017, and format the data.
+    Function to collect both input and output data for oldMode2017, and format the data.
 
     :param filter_by_corr: bool, if highly correlated input features should be removed
     :param filter_cols: array-like of str, manually select only a few columns to be included

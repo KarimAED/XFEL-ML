@@ -4,7 +4,7 @@ import pandas as pd
 
 from utility.estimators import neural_network
 from utility.plotting import plot_fit, plot_features
-from utility.pipelines import helpers
+from utility import helpers
 
 logger = logging.getLogger("pipelines")
 

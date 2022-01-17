@@ -3,7 +3,7 @@ import pandas as pd
 
 from utility.estimators import grad_boost
 from utility.plotting import plot_fit, plot_features
-from utility.pipelines import helpers
+from utility import helpers
 
 
 def gb_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True):

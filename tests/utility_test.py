@@ -4,7 +4,6 @@ import pytest
 
 from utility.split_prep_util import norm, train_test_norm
 
-
 class TestNorm:
 
     @pytest.mark.parametrize("data,ref,label", [((100, 1), pd.DataFrame(columns=["a"]), "label"),
@@ -33,8 +32,9 @@ class TestTrainTestNorm:
 
     @pytest.mark.parametrize("inp_df,out_df,split,normalize", [])
     def test_should_fail(self, inp_df, out_df, split, normalize):
-        pass
+        with pytest.raises(AssertionError):
+            train_test_norm(inp_df, out_df, split, normalize=normalize)
 
     @pytest.mark.parametrize("inp_df,out_df,split,normalize", [])
     def test_should_work(self, inp_df, out_df, split, normalize):
-        pass
+        x_tr, x_te, y_tr, y_te, i_ref, o_ref = train_test_norm(inp_df, out_df, split, normalize=normalize)

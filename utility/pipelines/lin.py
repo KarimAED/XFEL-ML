@@ -3,8 +3,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 from utility.plotting import plot_features, plot_fit
-from utility.estimators import grad_boost
-from utility.pipelines import helpers
+from utility import helpers
 
 
 def lin_pipeline(data, string_data, plot=True, save=True, pred_lims=False, legend=True, vmax=None):
