@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from oldMode2017.setup import get_data
-from newMode2021.code.setup import get_pump_data
+from newMode2021.setup import get_data_p1
 from utility.helpers import mae
 
 
@@ -29,7 +29,7 @@ else:
     selected_feats = ["vls_com_probe", "xgmd_rmsElectronSum", "xgmd_energy", "ebeam_ebeamL3Energy",
                       "gmd_energy", "ebeam_ebeamUndPosX", "vls_width_probe", "ebeam_ebeamUndAngY",
                       "ebeam_ebeamUndPosY", "ebeam_ebeamLTU450"]
-    data = get_pump_data("u2_273_37026_events.pkl", filter_cols=selected_feats)
+    data = get_data_p1("u2_273_37026_events.pkl", filter_cols=selected_feats)
     string_data = {
         "feat_name": "vls_com_pump",
         "plot_lab": r"$E_p$",

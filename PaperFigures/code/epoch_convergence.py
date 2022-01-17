@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import time as t
 from oldMode2017.setup import get_data
-from newMode2021.code.setup import get_pump_data
+from newMode2021.setup import get_data_p1
 
 from utility.pipelines import ann
 
@@ -30,7 +30,7 @@ else:
                       "ebeam_ebeamUndPosY", "ebeam_ebeamLTU450"]
     if not filter_cols:
         selected_feats = []
-    data = get_pump_data("u2_273_37026_events.pkl", filter_cols=selected_feats)
+    data = get_data_p1("u2_273_37026_events.pkl", filter_cols=selected_feats)
     string_data = {
         "feat_name": "vls_com_pump",
         "plot_lab": r"$E_p$",

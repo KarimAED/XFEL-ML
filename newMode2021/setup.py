@@ -9,7 +9,7 @@ from scipy.cluster import hierarchy
 from scipy.spatial.distance import squareform
 
 
-def get_pump_data(fname, split=0.15, include_probe=True, filterByCorr=False, filter_cols=[]):
+def get_data_p1(fname, split=0.15, include_probe=True, filterByCorr=False, filter_cols=[]):
     pathname = f"pumpProbe2021/data/{fname}"
 
     inp_df = pd.DataFrame()
@@ -102,7 +102,7 @@ def get_pump_data(fname, split=0.15, include_probe=True, filterByCorr=False, fil
     return train_test_norm(pump_inp, pump_out, split=split)
 
 
-def get_probe_data(fname, split=0.15, include_pump=True, filter_cols=[]):
+def get_data_p2(fname, split=0.15, include_pump=True, filter_cols=[]):
     pathname = f"pumpProbe2021/data/{fname}"
 
     inp_df = pd.DataFrame()
