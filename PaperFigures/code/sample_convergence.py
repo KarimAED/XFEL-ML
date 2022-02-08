@@ -7,8 +7,16 @@ from utility.helpers import mae
 
 from utility.pipelines import ann, gb, lin
 
-for_delay = True
+for_delay = False
 n_steps = 10
+
+if for_delay:
+    ds_name = "delay"
+else:
+    ds_name = "pulse1"
+
+save_name = "PaperFigures/Figure Data/samples_" + ds_name + ".csv"
+fig_name = "PaperFigures/sampleConv/" + ds_name + "_samples.pdf"
 
 
 #%%
@@ -69,10 +77,17 @@ print(all_maes)
 
 
 #%%
-np.savetxt("PaperFigures/Figure Data/samples_delay.csv", np.array(all_maes), delimiter=",", header=",".join(labels))
+np.savetxt(save_name, np.array(all_maes), delimiter=",", header=",".join(labels))
 
 #%%
+with open(save_name, "r") as inp:
+    lines = inp.readlines()
 
+labels = lines[0].split(" ")[1].split(",")
+
+all_maes = np.loadtxt(save_name, skiprows=1, delimiter=",")
+
+#%%
 colors = ["k", "r", "b"]
 plt.figure(figsize=(10,  10))
 all_maes_np = np.array(all_maes).T[(0, 1, 4, 5), :]
@@ -90,4 +105,4 @@ plt.legend()
 plt.xlabel(r"$N_{samp}$")
 plt.ylabel("MAE")
 plt.show()
-plt.savefig("PaperFigures/sampleConv/delay_samples.pdf")
+plt.savefig(fig_name)
