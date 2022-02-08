@@ -11,7 +11,9 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-@deprecated("The histogram gradient boosting regressor is experimental and should not be used.")
+@deprecated(
+    "The histogram gradient boosting regressor is experimental and should not be used."
+)
 def fit_grad_boost(x_tr, y_tr, reg=1, lr=0.1, iterations=1000, samples=20, leaves=31):
     """
     Deprecated function to fit a gradient boosting regressor using experimental HistGradientBoostingRegressor from sklearn
@@ -26,11 +28,20 @@ def fit_grad_boost(x_tr, y_tr, reg=1, lr=0.1, iterations=1000, samples=20, leave
     :return: HistGradientBoostingRegressor, fitted regressor with the given data and parameters
     """
 
-    logger.warning("Called deprecated function fit_grad_boost which relies on experimental Regressor.")
+    logger.warning(
+        "Called deprecated function fit_grad_boost which relies on experimental Regressor."
+    )
     # initialize regressor
-    reg = HistGradientBoostingRegressor(l2_regularization=reg, verbose=1, learning_rate=lr,
-                                        early_stopping=False, random_state=1, max_iter=iterations,
-                                        min_samples_leaf=samples, max_leaf_nodes=leaves)
+    reg = HistGradientBoostingRegressor(
+        l2_regularization=reg,
+        verbose=1,
+        learning_rate=lr,
+        early_stopping=False,
+        random_state=1,
+        max_iter=iterations,
+        min_samples_leaf=samples,
+        max_leaf_nodes=leaves,
+    )
     reg.fit(x_tr, y_tr)  # fit regressor
     return reg
 
@@ -48,8 +59,15 @@ def fit_xgboost(x_tr, y_tr, n_est=20, n_jobs=4, gamma=0.1, l2=0.0):
     """
     logger.info("Called fit_xgboost")
     # initialize regressor
-    reg = xgb.XGBRegressor(random_state=1, n_estimators=n_est, verbosity=2,
-                           n_jobs=n_jobs, gamma=gamma, reg_lambda=l2, tree_method="exact")
+    reg = xgb.XGBRegressor(
+        random_state=1,
+        n_estimators=n_est,
+        verbosity=2,
+        n_jobs=n_jobs,
+        gamma=gamma,
+        reg_lambda=l2,
+        tree_method="exact",
+    )
 
     reg.fit(x_tr, y_tr)  # fit regressor
     return reg

@@ -7,7 +7,7 @@ logger = logging.getLogger("general_util")
 # Helper function to evaluate mean absolute error (mae of two numpy arrays)
 def mae(x, y):
     logger.info("MAE Here")
-    return np.mean(np.abs(x-y))
+    return np.mean(np.abs(x - y))
 
 
 def permute(x_test, i):
@@ -24,7 +24,7 @@ def permute(x_test, i):
 
 def top_x_data(data, ranking, x):
     x_train, x_test, y_train, y_test, input_reference, output_reference = data
-    feats = ranking[:x + 1]
+    feats = ranking[: x + 1]
     x_tr = x_train[:, feats]
     x_te = x_test[:, feats]
     data_temp = list(data)

@@ -36,7 +36,9 @@ def format_inp():
 
     # select data and column names from different files for input features
     for f in files:
-        if any([i in f for i in ["EBeam", "EPICS", "GMD"]]):  # avoid unnecessary data loading
+        if any(
+            [i in f for i in ["EBeam", "EPICS", "GMD"]]
+        ):  # avoid unnecessary data loading
             data = np.load(os.path.join(source, f))
         if "EBeam" in f:
             if not ebeam_labels:
@@ -86,22 +88,40 @@ def format_outp():
             data = np.load(os.path.join(source, f))
             if not delay_labels:
                 delay_labels = ["Delays", "DelayMask"]
-                delay_data = np.array([data["DelayValuesList"].flatten(), data["DelayValuesListMask"]]).T
+                delay_data = np.array(
+                    [data["DelayValuesList"].flatten(), data["DelayValuesListMask"]]
+                ).T
             else:
-                temp_data = np.array([data["DelayValuesList"].flatten(), data["DelayValuesListMask"]]).T
+                temp_data = np.array(
+                    [data["DelayValuesList"].flatten(), data["DelayValuesListMask"]]
+                ).T
                 delay_data = np.append(delay_data, temp_data, axis=0)
 
         elif "TOF" in f:
             data = np.load(os.path.join(source, f))
             if not tof_labels:
-                tof_labels = ["LowGaussAmp", "LowGaussMean_eV", "LowGaussStd_eV", "HighGaussAmp", "HighGaussMean_eV",
-                              "HighGaussStd_eV"] + data["xTOF"].astype("str").tolist()
+                tof_labels = [
+                    "LowGaussAmp",
+                    "LowGaussMean_eV",
+                    "LowGaussStd_eV",
+                    "HighGaussAmp",
+                    "HighGaussMean_eV",
+                    "HighGaussStd_eV",
+                ] + data["xTOF"].astype("str").tolist()
 
-                fit_info = np.append(data["TOFDoubleFitList"], np.array([data["TOFDoubleFitListMask"]]).T, axis=1)
+                fit_info = np.append(
+                    data["TOFDoubleFitList"],
+                    np.array([data["TOFDoubleFitListMask"]]).T,
+                    axis=1,
+                )
                 tof_data = np.append(fit_info, data["TOFProfileList"], axis=1)
 
             else:
-                fit_info = np.append(data["TOFDoubleFitList"], np.array([data["TOFDoubleFitListMask"]]).T, axis=1)
+                fit_info = np.append(
+                    data["TOFDoubleFitList"],
+                    np.array([data["TOFDoubleFitListMask"]]).T,
+                    axis=1,
+                )
                 temp_data = np.append(fit_info, data["TOFProfileList"], axis=1)
                 tof_data = np.append(tof_data, temp_data, axis=0)
 
@@ -136,7 +156,9 @@ def get_data(filter_by_corr=False, filter_cols=[]):
     # get prepared mask
     delay_mask = delay_out["DelayMask"].values
     delays_nan = delay_out["Delays"].notna().values
-    delay_mask = delay_mask.astype(np.bool) & delays_nan.astype(np.bool)  # Also mask NaN values
+    delay_mask = delay_mask.astype(np.bool) & delays_nan.astype(
+        np.bool
+    )  # Also mask NaN values
     delay_mask = delay_mask  # create arg_mask to apply to inps and outputs
 
     # apply masking of events
@@ -146,13 +168,17 @@ def get_data(filter_by_corr=False, filter_cols=[]):
     print(delay_inp.shape[0], "events left.")
     print("Filtering MAD & Energy...")
     # Get mean absolute deviation of outputs
-    mad_delays = abs((delay_out.values
-                      - np.median(delay_out.values)) / sps.median_abs_deviation(delay_out.values))
+    mad_delays = abs(
+        (delay_out.values - np.median(delay_out.values))
+        / sps.median_abs_deviation(delay_out.values)
+    )
 
     # create mad and beam energy mask from relevant arrays
     mad_mask = mad_delays < 4
 
-    emask = (delay_inp["f_63_ENRC"].values > 0.005) & (delay_inp["f_64_ENRC"].values > 0.005)
+    emask = (delay_inp["f_63_ENRC"].values > 0.005) & (
+        delay_inp["f_64_ENRC"].values > 0.005
+    )
 
     arg_mask = np.argwhere(mad_mask & emask).flatten()  # generate yet another arg_mask
 
@@ -181,10 +207,12 @@ def get_data(filter_by_corr=False, filter_cols=[]):
         distance_matrix = 1 - np.abs(corr)
         dist_linkage = hierarchy.ward(squareform(distance_matrix))
         dendro = hierarchy.dendrogram(
-            dist_linkage, labels=[i for i in range(len(delay_inp.columns))], leaf_rotation=90
+            dist_linkage,
+            labels=[i for i in range(len(delay_inp.columns))],
+            leaf_rotation=90,
         )
         dendro_idx = np.arange(0, len(dendro["ivl"]))
-        cluster_ids = hierarchy.fcluster(dist_linkage, .7, criterion="distance")
+        cluster_ids = hierarchy.fcluster(dist_linkage, 0.7, criterion="distance")
         cluster_id_to_feature_ids = defaultdict(list)
         for idx, cluster_id in enumerate(cluster_ids):
             cluster_id_to_feature_ids[cluster_id].append(idx)

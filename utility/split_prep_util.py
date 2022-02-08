@@ -19,12 +19,26 @@ def norm(data, ref, label):
     assert type(ref) == pd.DataFrame, "norm: ref must be pd.DataFrame"
     assert type(label) == str, "norm: label must be string"
     if len(ref.columns) > 1:
-        assert data.shape[1] == len(ref.columns), "norm: number of columns in ref and data must match"
+        assert data.shape[1] == len(
+            ref.columns
+        ), "norm: number of columns in ref and data must match"
     else:
-        assert len(data.shape) == 1, "norm: number of columns in ref and data must match"
+        assert (
+            len(data.shape) == 1
+        ), "norm: number of columns in ref and data must match"
 
-    data_mean = pd.Series(data=np.mean(data, axis=0), index=ref.columns, name=label + "_mean", dtype=np.double)
-    data_std = pd.Series(data=np.std(data, axis=0), index=ref.columns, name=label + "_std", dtype=np.double)
+    data_mean = pd.Series(
+        data=np.mean(data, axis=0),
+        index=ref.columns,
+        name=label + "_mean",
+        dtype=np.double,
+    )
+    data_std = pd.Series(
+        data=np.std(data, axis=0),
+        index=ref.columns,
+        name=label + "_std",
+        dtype=np.double,
+    )
 
     assert np.all(data_std.values != 0), "norm: data has 0 std"
 

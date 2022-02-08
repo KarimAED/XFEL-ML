@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 import matplotlib
+
 matplotlib.style.use("utility/plotting/styling.mplstyle")
 import matplotlib.pyplot as plt
 import numpy as np

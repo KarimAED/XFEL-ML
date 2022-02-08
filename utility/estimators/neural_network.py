@@ -15,7 +15,9 @@ class Layer:
     A wrapper for the key information to be passed to a given Layer object from tf.
     """
 
-    def __init__(self, kind=Dense, units=10, activation="relu", kernel_regularizer="l2", rate=0.0):
+    def __init__(
+        self, kind=Dense, units=10, activation="relu", kernel_regularizer="l2", rate=0.0
+    ):
         """
         Initalizer for the layer wrapper. Passes the kind of layer to be used (tf class),
         as well as the key parameters to be passed.
@@ -52,7 +54,9 @@ class Layer:
         """
         d = self.__dict__.copy()  # copy the dict, so that 'kind' attr is not deleted
         del d["kind"]  # remove kind from dict, as it isn't passed to tf.keras.Layer
-        return {k: v for k, v in d.items() if v is not None}  # remove all parameters that were filtered previously
+        return {
+            k: v for k, v in d.items() if v is not None
+        }  # remove all parameters that were filtered previously
 
 
 def get_layers(shape, activation, regularizer, drop_out, batch_norm):
@@ -71,11 +75,15 @@ def get_layers(shape, activation, regularizer, drop_out, batch_norm):
     # shape includes node counts for all layers but drop-out and batch_normalization
     for i in shape:
         # apply dense layer with parameters
-        layer_list.append(Layer(Dense, units=i, activation=activation, kernel_regularizer=regularizer))
+        layer_list.append(
+            Layer(Dense, units=i, activation=activation, kernel_regularizer=regularizer)
+        )
 
         # add in drop-out, does nothing if drop_out=0.0
         layer_list.append(Layer(Dropout, rate=drop_out))
-        if batch_norm:  # if batch normalization is to be applied, apply between all layers
+        if (
+            batch_norm
+        ):  # if batch normalization is to be applied, apply between all layers
             layer_list.append(Layer(BatchNormalization))
     return layer_list
 
@@ -93,13 +101,29 @@ def ann(layer_list, out_shape, loss, opt):
     tf.random.set_seed(1)  # set seed for consistency of results
     model = tf.keras.Sequential()  # initialize empty model
     for layer in layer_list:  # add layers in one by one
-        model.add(layer.kind(**layer.get_attr()))  # unpack all attributes but the kind of layer
-    model.add(Dense(units=out_shape, activation="linear"))  # use linear activation for the output layer
-    model.compile(opt, loss=loss, metrics=["mae"])  # compile using the relevant loss, opt, and 'mae' as our KPM
+        model.add(
+            layer.kind(**layer.get_attr())
+        )  # unpack all attributes but the kind of layer
+    model.add(
+        Dense(units=out_shape, activation="linear")
+    )  # use linear activation for the output layer
+    model.compile(
+        opt, loss=loss, metrics=["mae"]
+    )  # compile using the relevant loss, opt, and 'mae' as our KPM
     return model
 
 
-def fit_ann(x_tr, y_tr, layer_list, rate=0.0015, loss="mae", epochs=3_000, validation_split=0.15, batch_size=1_000, verbose=2):
+def fit_ann(
+    x_tr,
+    y_tr,
+    layer_list,
+    rate=0.0015,
+    loss="mae",
+    epochs=3_000,
+    validation_split=0.15,
+    batch_size=1_000,
+    verbose=2,
+):
     """
     Function to generate and fit an ann with the given parameters and data.
 
@@ -125,7 +149,12 @@ def fit_ann(x_tr, y_tr, layer_list, rate=0.0015, loss="mae", epochs=3_000, valid
     est = ann(layer_list, out_sh, loss, opt)  # generate estimator
 
     # fit estimator and store history
-    hist = est.fit(x_tr, y_tr, batch_size,
-                   epochs=epochs, verbose=verbose,
-                   validation_split=validation_split)
+    hist = est.fit(
+        x_tr,
+        y_tr,
+        batch_size,
+        epochs=epochs,
+        verbose=verbose,
+        validation_split=validation_split,
+    )
     return est, hist

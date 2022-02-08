@@ -7,68 +7,108 @@ from utility.helpers import mae
 
 from utility.pipelines import ann, gb, lin
 
-for_delay = False
-n_steps = 10
+FOR_DELAY = False
+N_STEPS = 10
 
-if for_delay:
-    ds_name = "delay"
+if FOR_DELAY:
+    DS_NAME = "delay"
 else:
-    ds_name = "pulse1"
+    DS_NAME = "pulse1"
 
-save_name = "PaperFigures/Figure Data/samples_" + ds_name + ".csv"
-fig_name = "PaperFigures/sampleConv/" + ds_name + "_samples.pdf"
+SAVE_NAME = "PaperFigures/Figure Data/samples_" + DS_NAME + ".csv"
+FIG_NAME = "PaperFigures/sampleConv/" + DS_NAME + "_samples.pdf"
 
 
 #%%
 
-if for_delay:
-    selected_feats = ["ebeamEnergyBC2", "ebeamDumpCharge", "ebeamPkCurrBC1", "ebeamL3Energy",
-                      "ebeamXTCAVPhase", "ebeamLTU250", "ebeamLTU450", "ebeamPhotonEnergy",
-                      "AMO:R14:IOC:10:VHS5:CH3:CurrentMeasure", "AMO:R14:IOC:21:VHS7:CH0:VoltageMeasure"]
+if FOR_DELAY:
+    selected_feats = [
+        "ebeamEnergyBC2",
+        "ebeamDumpCharge",
+        "ebeamPkCurrBC1",
+        "ebeamL3Energy",
+        "ebeamXTCAVPhase",
+        "ebeamLTU250",
+        "ebeamLTU450",
+        "ebeamPhotonEnergy",
+        "AMO:R14:IOC:10:VHS5:CH3:CurrentMeasure",
+        "AMO:R14:IOC:21:VHS7:CH0:VoltageMeasure",
+    ]
     data = get_data(filter_cols=selected_feats)
     string_data = {
         "feat_name": "Delays",
         "plot_lab": r"$T_P$",
         "unit": "fs",
         "data_fname": "tmp.npz",
-        "plot_fname": "tmp"
+        "plot_fname": "tmp",
     }
 else:
-    selected_feats = ["vls_com_probe", "xgmd_rmsElectronSum", "xgmd_energy", "ebeam_ebeamL3Energy",
-                      "gmd_energy", "ebeam_ebeamUndPosX", "vls_width_probe", "ebeam_ebeamUndAngY",
-                      "ebeam_ebeamUndPosY", "ebeam_ebeamLTU450"]
+    selected_feats = [
+        "vls_com_probe",
+        "xgmd_rmsElectronSum",
+        "xgmd_energy",
+        "ebeam_ebeamL3Energy",
+        "gmd_energy",
+        "ebeam_ebeamUndPosX",
+        "vls_width_probe",
+        "ebeam_ebeamUndAngY",
+        "ebeam_ebeamUndPosY",
+        "ebeam_ebeamLTU450",
+    ]
     data = get_data_p1("u2_273_37026_events.pkl", filter_cols=selected_feats)
     string_data = {
         "feat_name": "vls_com_pump",
         "plot_lab": r"$E_p$",
         "unit": "eV",
         "data_fname": "tmp.npz",
-        "plot_fname": "tmp"
+        "plot_fname": "tmp",
     }
 
 x_train, x_test, y_train, y_test, input_reference, output_reference = data
 
-step_size = x_train.shape[0] // n_steps
+step_size = x_train.shape[0] // N_STEPS
 
 #%%
 
 all_maes = []
 
-for i in range(1, n_steps+1):
-    temp_data = (x_train[:i*step_size], x_test, y_train[:i*step_size], y_test, input_reference, output_reference)
+for i in range(1, N_STEPS + 1):
+    temp_data = (
+        x_train[: i * step_size],
+        x_test,
+        y_train[: i * step_size],
+        y_test,
+        input_reference,
+        output_reference,
+    )
 
-    labels = ["ann_train", "ann_test", "lin_train", "lin_test", "gb_train", "gb_test"]
+    labels = [
+        "ann_train",
+        "ann_test",
+        "lin_train",
+        "lin_test",
+        "gb_train",
+        "gb_test",
+    ]
     mae_i = []
 
     ann_est, hist = ann.ann_pipeline(temp_data, string_data)
     lin_est, feats = lin.lin_feature_pipeline(temp_data, string_data)
     gb_est = gb.gb_pipeline(temp_data, string_data)
 
-    mae_i.append(ann_est.evaluate(x_train[:i*step_size], y_train[:i*step_size])[1])
+    mae_i.append(
+        ann_est.evaluate(x_train[: i * step_size], y_train[: i * step_size])[1]
+    )
     mae_i.append(ann_est.evaluate(x_test, y_test)[1])
-    mae_i.append(mae(lin_est.predict(x_train[:i*step_size]), y_train[:i*step_size]))
+    mae_i.append(
+        mae(
+            lin_est.predict(x_train[: i * step_size]), y_train[: i * step_size]
+        )
+    )
     mae_i.append(mae(lin_est.predict(x_test), y_test))
-    mae_i.append(mae(gb_est.predict(x_train[:i*step_size]), y_train[:i*step_size]))
+    mae_i.append(
+        mae(gb_est.predict(x_train[: i * step_size]), y_train[: i * step_size])
+    )
     mae_i.append(mae(gb_est.predict(x_test), y_test))
 
     all_maes.append(mae_i)
@@ -77,32 +117,39 @@ print(all_maes)
 
 
 #%%
-np.savetxt(save_name, np.array(all_maes), delimiter=",", header=",".join(labels))
+np.savetxt(
+    SAVE_NAME, np.array(all_maes), delimiter=",", header=",".join(labels)
+)
 
 #%%
-with open(save_name, "r") as inp:
+with open(SAVE_NAME, "r") as inp:
     lines = inp.readlines()
 
 labels = lines[0].split(" ")[1].split(",")
 
-all_maes = np.loadtxt(save_name, skiprows=1, delimiter=",")
+all_maes = np.loadtxt(SAVE_NAME, skiprows=1, delimiter=",")
 
 #%%
 colors = ["k", "r", "b"]
-plt.figure(figsize=(10,  10))
+plt.figure(figsize=(10, 10))
 all_maes_np = np.array(all_maes).T[(0, 1, 4, 5), :]
 labels_np = np.array(labels)[[0, 1, 4, 5]]
 for i in range(all_maes_np.shape[0]):
     mae = all_maes_np[i]
-    style = colors[i//2]
+    style = colors[i // 2]
     if i % 2 == 0:
         style += "--"
     else:
         style += "-"
-    plt.plot([(j+1)*step_size for j in range(len(mae))], mae, style, label=labels_np[i])
+    plt.plot(
+        [(j + 1) * step_size for j in range(len(mae))],
+        mae,
+        style,
+        label=labels_np[i],
+    )
 
 plt.legend()
 plt.xlabel(r"$N_{samp}$")
 plt.ylabel("MAE")
 plt.show()
-plt.savefig(fig_name)
+plt.savefig(FIG_NAME)

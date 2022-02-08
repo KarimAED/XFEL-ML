@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+
 plt.style.use("./utility/plotting/styling.mplstyle")
 
 
@@ -23,7 +24,6 @@ def scatter_diff(data_1, data_2, string_args):
     rf_y = red_feat_data["test_out"]
     rf_p = red_feat_data["test_pred"]
 
-
     all_y = np.append(rf_y, af_y)
     all_p = np.append(rf_p, af_p)
 
@@ -36,10 +36,12 @@ def scatter_diff(data_1, data_2, string_args):
     ax.set_ylim(x)
     # ax.set_xlabel(f"Measured {string_args['quantity']} ({string_args['unit']})")
     # ax.set_ylabel(f"Predicted {string_args['quantity']} ({string_args['unit']})")
-    scatter = ax.scatter(all_y, all_p, c=binary_label,
-                         cmap="bwr", s=2, alpha=0.2)
+    scatter = ax.scatter(all_y, all_p, c=binary_label, cmap="bwr", s=2, alpha=0.2)
     ax.plot(x, x, "k--")
-    leg = ax.legend(scatter.legend_elements(alpha=1, prop="colors")[0],
-                    [string_args['label_1'], string_args['label_2']], loc="lower right")
+    leg = ax.legend(
+        scatter.legend_elements(alpha=1, prop="colors")[0],
+        [string_args["label_1"], string_args["label_2"]],
+        loc="lower right",
+    )
     ax.add_artist(leg)
     plt.show()

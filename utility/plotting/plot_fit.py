@@ -2,11 +2,22 @@ from deprecated import deprecated
 
 import numpy as np
 import matplotlib.pyplot as plt
+
 plt.style.use("./utility/plotting/styling.mplstyle")
 from matplotlib.ticker import MaxNLocator
 
 
-def plot_pvm(y, pred, label, x_label, y_label, save_str="", legend=True, vmax=None, pred_lims=False):
+def plot_pvm(
+    y,
+    pred,
+    label,
+    x_label,
+    y_label,
+    save_str="",
+    legend=True,
+    vmax=None,
+    pred_lims=False,
+):
     """
     Function to plot 2d-histogram of measurements (labels, x-axis) and predictions (y-axis)
 
@@ -27,7 +38,9 @@ def plot_pvm(y, pred, label, x_label, y_label, save_str="", legend=True, vmax=No
     edge_y = np.array([np.min(pred), np.max(pred)])
     y = np.append(y, edge_x)
     if pred_lims:
-        ax.ticklabel_format(style='scientific', axis='y', scilimits=(0, 0), useMathText=True)
+        ax.ticklabel_format(
+            style="scientific", axis="y", scilimits=(0, 0), useMathText=True
+        )
         p_lim = edge_y
     else:
         p_lim = edge_x
@@ -35,7 +48,10 @@ def plot_pvm(y, pred, label, x_label, y_label, save_str="", legend=True, vmax=No
     ax.yaxis.set_major_locator(MaxNLocator(5))
     ax.xaxis.set_major_locator(MaxNLocator(5))
     ax.plot(edge_x, edge_x, "w--")
-    bins = [np.linspace(edge_x[0], edge_x[1], 100), np.linspace(p_lim[0], p_lim[1], 100)]
+    bins = [
+        np.linspace(edge_x[0], edge_x[1], 100),
+        np.linspace(p_lim[0], p_lim[1], 100),
+    ]
     if vmax is not None:
         h = ax.hist2d(y, pred, bins=bins, vmax=vmax)
     else:
@@ -49,7 +65,7 @@ def plot_pvm(y, pred, label, x_label, y_label, save_str="", legend=True, vmax=No
     plt.title(label)
     plt.show()
     if save_str:
-        plt.savefig(save_str+".png")
+        plt.savefig(save_str + ".png")
 
 
 @deprecated("Use 2d-histogram instead")
@@ -88,7 +104,9 @@ def plot_hist(hist):
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
     plt.plot(hist.history["loss"], label="Training loss")  # plot loss
-    plt.plot(hist.history["val_loss"], label="Validation loss")  # plot loss on validation
+    plt.plot(
+        hist.history["val_loss"], label="Validation loss"
+    )  # plot loss on validation
     plt.legend()
     plt.show()
 

@@ -9,7 +9,9 @@ from scipy.cluster import hierarchy
 from scipy.spatial.distance import squareform
 
 
-def get_data_p1(fname, split=0.15, include_probe=True, filterByCorr=False, filter_cols=[]):
+def get_data_p1(
+    fname, split=0.15, include_probe=True, filterByCorr=False, filter_cols=[]
+):
     pathname = f"newMode2021/data/{fname}"
 
     inp_df = pd.DataFrame()
@@ -39,7 +41,11 @@ def get_data_p1(fname, split=0.15, include_probe=True, filterByCorr=False, filte
     print("Filtering events...")
     # get prepared mask
     if include_probe:
-        pump_nan = pump_out["vls_com_pump"].notna().values & pp_inp["vls_com_probe"].notna().values & pp_inp["vls_width_probe"].notna().values
+        pump_nan = (
+            pump_out["vls_com_pump"].notna().values
+            & pp_inp["vls_com_probe"].notna().values
+            & pp_inp["vls_width_probe"].notna().values
+        )
     else:
         pump_nan = pump_out["vls_com_pump"].notna().values
     pump_mask = pump_nan.astype(np.bool)  # Also mask NaN values
@@ -68,7 +74,9 @@ def get_data_p1(fname, split=0.15, include_probe=True, filterByCorr=False, filte
         distance_matrix = 1 - np.abs(corr)
         dist_linkage = hierarchy.ward(squareform(distance_matrix))
         dendro = hierarchy.dendrogram(
-            dist_linkage, labels=[i for i in range(len(pump_inp.columns))], leaf_rotation=90
+            dist_linkage,
+            labels=[i for i in range(len(pump_inp.columns))],
+            leaf_rotation=90,
         )
         dendro_idx = np.arange(0, len(dendro["ivl"]))
         cluster_ids = hierarchy.fcluster(dist_linkage, 1, criterion="distance")
@@ -80,15 +88,21 @@ def get_data_p1(fname, split=0.15, include_probe=True, filterByCorr=False, filte
     print(pump_inp.shape[1], "columns left.")
     print("Filtering MAD & Energy...")
     # Get mean absolute deviation of outputs
-    mad_delays = abs((pump_out.values
-                      - np.median(pump_out.values)) / sps.median_abs_deviation(pump_out.values))
+    mad_delays = abs(
+        (pump_out.values - np.median(pump_out.values))
+        / sps.median_abs_deviation(pump_out.values)
+    )
 
     mad_mask = mad_delays < 4
 
     if include_probe:
-        mad_2_delays = abs((pump_inp["vls_com_probe"].values
-                            - np.median(pump_inp["vls_com_probe"].values))
-                           / sps.median_abs_deviation(pump_inp["vls_com_probe"].values))
+        mad_2_delays = abs(
+            (
+                pump_inp["vls_com_probe"].values
+                - np.median(pump_inp["vls_com_probe"].values)
+            )
+            / sps.median_abs_deviation(pump_inp["vls_com_probe"].values)
+        )
         mad_2_mask = mad_2_delays < 4
         mad_mask = mad_mask & mad_2_mask
 
@@ -132,7 +146,11 @@ def get_data_p2(fname, split=0.15, include_pump=True, filter_cols=[]):
     print("Filtering events...")
     # get prepared mask
     if include_pump:
-        probe_nan = probe_out["vls_com_probe"].notna().values & pp_inp["vls_com_pump"].notna().values & pp_inp["vls_width_pump"].notna().values
+        probe_nan = (
+            probe_out["vls_com_probe"].notna().values
+            & pp_inp["vls_com_pump"].notna().values
+            & pp_inp["vls_width_pump"].notna().values
+        )
     else:
         probe_nan = probe_out["vls_com_probe"].notna().values
     probe_mask = probe_nan.astype(np.bool)  # Also mask NaN values
@@ -153,15 +171,21 @@ def get_data_p2(fname, split=0.15, include_pump=True, filter_cols=[]):
     print(probe_inp.shape[1], "columns left.")
     print("Filtering MAD & Energy...")
     # Get mean absolute deviation of outputs
-    mad_delays = abs((probe_out.values
-                      - np.median(probe_out.values)) / sps.median_abs_deviation(probe_out.values))
+    mad_delays = abs(
+        (probe_out.values - np.median(probe_out.values))
+        / sps.median_abs_deviation(probe_out.values)
+    )
 
     mad_mask = mad_delays < 4
 
     if include_pump:
-        mad_2_delays = abs((probe_inp["vls_com_pump"].values
-                            - np.median(probe_inp["vls_com_pump"].values))
-                           / sps.median_abs_deviation(probe_inp["vls_com_pump"].values))
+        mad_2_delays = abs(
+            (
+                probe_inp["vls_com_pump"].values
+                - np.median(probe_inp["vls_com_pump"].values)
+            )
+            / sps.median_abs_deviation(probe_inp["vls_com_pump"].values)
+        )
         mad_2_mask = mad_2_delays < 4
         mad_mask = mad_mask & mad_2_mask
 
