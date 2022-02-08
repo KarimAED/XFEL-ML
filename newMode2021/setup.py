@@ -10,7 +10,7 @@ from scipy.spatial.distance import squareform
 
 
 def get_data_p1(fname, split=0.15, include_probe=True, filterByCorr=False, filter_cols=[]):
-    pathname = f"pumpProbe2021/data/{fname}"
+    pathname = f"newMode2021/data/{fname}"
 
     inp_df = pd.DataFrame()
     out_df = pd.DataFrame()
@@ -103,7 +103,7 @@ def get_data_p1(fname, split=0.15, include_probe=True, filterByCorr=False, filte
 
 
 def get_data_p2(fname, split=0.15, include_pump=True, filter_cols=[]):
-    pathname = f"pumpProbe2021/data/{fname}"
+    pathname = f"newMode2021/data/{fname}"
 
     inp_df = pd.DataFrame()
     out_df = pd.DataFrame()

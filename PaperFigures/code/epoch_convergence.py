@@ -1,12 +1,13 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import time as t
 from oldMode2017.setup import get_data
 from newMode2021.setup import get_data_p1
 
 from utility.pipelines import ann
 
-for_delay = True
-filter_cols = True
+for_delay = False
+filter_cols = False
 
 #%%
 
@@ -47,16 +48,15 @@ e = t.time()
 print("Fitting duration: %.2fs" % (e-s))
 
 #%%
-import matplotlib
-matplotlib.style.use("./utility/plotting/styling.mplstyle")
-
-plt.figure(figsize=(10, 10))
+plt.figure(figsize=(6, 6))
 plt.xlabel("Epochs")
+plt.xlim(0, 5000)
 plt.ylabel(r"$\mathcal{M}$ (normalised with variance)")
 plt.plot(hist.history["mae"], label=r"Training $\mathcal{M}$")
 plt.plot(hist.history["val_mae"], label=r"Validation $\mathcal{M}$")
+plt.hlines(np.min(hist.history["mae"]), 0, 5000, color="k", linestyle="--")
 plt.legend()
 plt.show()
-plt.savefig("PaperFigures/pump_allFeats.png")
+plt.savefig("PaperFigures/ec_pulse_1_full.pdf")
 
 
