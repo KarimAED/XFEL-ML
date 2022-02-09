@@ -4,7 +4,13 @@ import matplotlib.pyplot as plt
 plt.style.use("utility/plotting/styling.mplstyle")
 
 old_names = ["old_u1.npz", "old_u2.npz", "old_u3.npz"]
-new_names = ["new_u1.npz", "new_u2.npz", "new_u3.npz", "new_u4.npz", "new_u5.npz"]
+new_names = [
+    "new_u1.npz",
+    "new_u2.npz",
+    "new_u3.npz",
+    "new_u4.npz",
+    "new_u5.npz",
+]
 
 normalised = True
 #%%

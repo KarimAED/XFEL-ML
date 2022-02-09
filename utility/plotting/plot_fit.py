@@ -115,6 +115,8 @@ def plot_hist(hist):
     plt.xlabel("Epochs")
     plt.ylabel("MAE")
     plt.plot(hist.history["mae"], label="Training MAE")  # plot mae
-    plt.plot(hist.history["val_mae"], label="Validation MAE")  # plot validation mae
+    plt.plot(
+        hist.history["val_mae"], label="Validation MAE"
+    )  # plot validation mae
     plt.legend()
     plt.show()

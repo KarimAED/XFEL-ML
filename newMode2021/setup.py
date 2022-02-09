@@ -58,7 +58,9 @@ def get_data_p1(
     print("Filtering input columns...")
     # Filter input features by variance
     var_thresh = 10
-    feat_columns = [c for c in pump_inp if len(np.unique(pump_inp[c])) > var_thresh]
+    feat_columns = [
+        c for c in pump_inp if len(np.unique(pump_inp[c])) > var_thresh
+    ]
     pump_inp = pump_inp[feat_columns]
     if filter_cols:
         pump_inp = pump_inp[filter_cols]
@@ -157,13 +159,17 @@ def get_data_p2(fname, split=0.15, include_pump=True, filter_cols=[]):
 
     # apply masking of events
     probe_inp = pp_inp.loc[probe_mask].copy()
-    probe_out = pp_out.loc[probe_mask, "vls_com_probe"]  # only select delay copy
+    probe_out = pp_out.loc[
+        probe_mask, "vls_com_probe"
+    ]  # only select delay copy
 
     print(probe_inp.shape[0], "events left.")
     print("Filtering input columns...")
     # Filter input features by variance
     var_thresh = 10
-    feat_columns = [c for c in probe_inp if len(np.unique(probe_inp[c])) > var_thresh]
+    feat_columns = [
+        c for c in probe_inp if len(np.unique(probe_inp[c])) > var_thresh
+    ]
     probe_inp = probe_inp[feat_columns]
 
     if filter_cols:

@@ -35,7 +35,9 @@ def top_x_data(data, ranking, x):
     return data_temp
 
 
-def rescale_output(feat_name, output_reference, y_train, y_test, pred_train, pred_test):
+def rescale_output(
+    feat_name, output_reference, y_train, y_test, pred_train, pred_test
+):
     # get the relevant column from the output reference
     out_ref = output_reference[feat_name]
 
@@ -44,6 +46,8 @@ def rescale_output(feat_name, output_reference, y_train, y_test, pred_train, pre
     test_pred = pred_test * out_ref.loc["test_std"] + out_ref.loc["test_mean"]
 
     train_out = y_train * out_ref.loc["train_std"] + out_ref.loc["train_mean"]
-    train_pred = pred_train * out_ref.loc["train_std"] + out_ref.loc["train_mean"]
+    train_pred = (
+        pred_train * out_ref.loc["train_std"] + out_ref.loc["train_mean"]
+    )
 
     return out_ref, train_out, test_out, train_pred, test_pred

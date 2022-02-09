@@ -16,7 +16,12 @@ class Layer:
     """
 
     def __init__(
-        self, kind=Dense, units=10, activation="relu", kernel_regularizer="l2", rate=0.0
+        self,
+        kind=Dense,
+        units=10,
+        activation="relu",
+        kernel_regularizer="l2",
+        rate=0.0,
     ):
         """
         Initalizer for the layer wrapper. Passes the kind of layer to be used (tf class),
@@ -52,8 +57,12 @@ class Layer:
 
         :return: dict, all relevant parameters to be passed to tf.keras.Layer
         """
-        d = self.__dict__.copy()  # copy the dict, so that 'kind' attr is not deleted
-        del d["kind"]  # remove kind from dict, as it isn't passed to tf.keras.Layer
+        d = (
+            self.__dict__.copy()
+        )  # copy the dict, so that 'kind' attr is not deleted
+        del d[
+            "kind"
+        ]  # remove kind from dict, as it isn't passed to tf.keras.Layer
         return {
             k: v for k, v in d.items() if v is not None
         }  # remove all parameters that were filtered previously
@@ -76,7 +85,12 @@ def get_layers(shape, activation, regularizer, drop_out, batch_norm):
     for i in shape:
         # apply dense layer with parameters
         layer_list.append(
-            Layer(Dense, units=i, activation=activation, kernel_regularizer=regularizer)
+            Layer(
+                Dense,
+                units=i,
+                activation=activation,
+                kernel_regularizer=regularizer,
+            )
         )
 
         # add in drop-out, does nothing if drop_out=0.0

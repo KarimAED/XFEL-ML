@@ -14,7 +14,9 @@ logger = logging.getLogger(__name__)
 @deprecated(
     "The histogram gradient boosting regressor is experimental and should not be used."
 )
-def fit_grad_boost(x_tr, y_tr, reg=1, lr=0.1, iterations=1000, samples=20, leaves=31):
+def fit_grad_boost(
+    x_tr, y_tr, reg=1, lr=0.1, iterations=1000, samples=20, leaves=31
+):
     """
     Deprecated function to fit a gradient boosting regressor using experimental HistGradientBoostingRegressor from sklearn
 

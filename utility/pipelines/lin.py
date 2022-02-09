@@ -7,7 +7,13 @@ from utility import helpers
 
 
 def lin_pipeline(
-    data, string_data, plot=True, save=True, pred_lims=False, legend=True, vmax=None
+    data,
+    string_data,
+    plot=True,
+    save=True,
+    pred_lims=False,
+    legend=True,
+    vmax=None,
 ):
     x_train, x_test, y_train, y_test, inp_df, out_df = data
 
@@ -24,8 +30,19 @@ def lin_pipeline(
     predictions = lin_model.predict(x_test)
     pred_train = lin_model.predict(x_train)
 
-    out_ref, train_out, test_out, train_pred, test_pred = helpers.rescale_output(
-        string_data["feat_name"], out_df, y_train, y_test, pred_train, predictions
+    (
+        out_ref,
+        train_out,
+        test_out,
+        train_pred,
+        test_pred,
+    ) = helpers.rescale_output(
+        string_data["feat_name"],
+        out_df,
+        y_train,
+        y_test,
+        pred_train,
+        predictions,
     )
 
     if save:
@@ -42,7 +59,9 @@ def lin_pipeline(
         unit = string_data["unit"]
         label = "LIN; MAE: {}{}".format(
             round(
-                helpers.mae(lin_model.predict(x_test), y_test) * out_ref["test_std"], 2
+                helpers.mae(lin_model.predict(x_test), y_test)
+                * out_ref["test_std"],
+                2,
             ),
             unit,
         )
@@ -89,7 +108,11 @@ def lin_feature_pipeline(
         scores.append(score)
 
     feature_rank = pd.DataFrame(
-        {"features": permuted_features, "mae_score": scores, "feat_ind": permuted_index}
+        {
+            "features": permuted_features,
+            "mae_score": scores,
+            "feat_ind": permuted_index,
+        }
     )
     feature_rank.sort_values("mae_score", inplace=True, ascending=False)
 
@@ -110,7 +133,9 @@ def lin_feature_pipeline(
         )
 
     plot_features.plot_both(
-        feature_rank["mae_score"].values, feature_rank["features"].values, scores
+        feature_rank["mae_score"].values,
+        feature_rank["features"].values,
+        scores,
     )
 
     key_features = i_ref.columns[ranking][:10]
@@ -118,7 +143,11 @@ def lin_feature_pipeline(
     data_filtered = helpers.top_x_data(data, ranking, 10)
 
     new_lin = lin_pipeline(
-        data_filtered, string_data, pred_lims=pred_lims, legend=legend, vmax=vmax
+        data_filtered,
+        string_data,
+        pred_lims=pred_lims,
+        legend=legend,
+        vmax=vmax,
     )
 
     return new_lin, key_features

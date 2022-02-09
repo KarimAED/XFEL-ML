@@ -27,21 +27,23 @@ def scatter_diff(data_1, data_2, string_args):
     all_y = np.append(rf_y, af_y)
     all_p = np.append(rf_p, af_p)
 
-    x = [np.min(all_y), np.max(all_y)]
+    x_lims = [np.min(all_y), np.max(all_y)]
 
     binary_label = np.append(np.zeros(rf_y.size), np.ones(af_y.size))
 
-    fig, ax = plt.subplots(figsize=(7, 7))
-    ax.set_xlim(x)
-    ax.set_ylim(x)
+    _, ax_0 = plt.subplots(figsize=(7, 7))
+    ax_0.set_xlim(x_lims)
+    ax_0.set_ylim(x_lims)
     # ax.set_xlabel(f"Measured {string_args['quantity']} ({string_args['unit']})")
     # ax.set_ylabel(f"Predicted {string_args['quantity']} ({string_args['unit']})")
-    scatter = ax.scatter(all_y, all_p, c=binary_label, cmap="bwr", s=2, alpha=0.2)
-    ax.plot(x, x, "k--")
-    leg = ax.legend(
+    scatter = ax_0.scatter(
+        all_y, all_p, c=binary_label, cmap="bwr", s=2, alpha=0.2
+    )
+    ax_0.plot(x_lims, x_lims, "k--")
+    leg = ax_0.legend(
         scatter.legend_elements(alpha=1, prop="colors")[0],
         [string_args["label_1"], string_args["label_2"]],
         loc="lower right",
     )
-    ax.add_artist(leg)
+    ax_0.add_artist(leg)
     plt.show()

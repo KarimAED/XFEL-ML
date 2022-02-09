@@ -1,8 +1,4 @@
 from collections import defaultdict
-
-import matplotlib
-
-matplotlib.style.use("utility/plotting/styling.mplstyle")
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import spearmanr
@@ -28,7 +24,11 @@ ax.set_ylabel(r"$W(x_i, x_j)$")
 distance_matrix = 1 - np.abs(corr)
 dist_linkage = hierarchy.ward(squareform(distance_matrix))
 dendro = hierarchy.dendrogram(
-    dist_linkage, ax=ax, leaf_rotation=90, count_sort="ascending", no_labels=True
+    dist_linkage,
+    ax=ax,
+    leaf_rotation=90,
+    count_sort="ascending",
+    no_labels=True,
 )
 dendro_idx = np.arange(0, len(dendro["ivl"]), 5)
 

@@ -6,7 +6,9 @@ from utility.plotting import plot_fit, plot_features
 from utility import helpers
 
 
-def gb_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True):
+def gb_pipeline(
+    data, string_data, save=True, plot=True, vmax=None, legend=True
+):
     """
     Pipeline to extract data, fit a gb regressor and save + plot the results.
 
@@ -38,7 +40,13 @@ def gb_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True)
     predictions = xgb.predict(x_test)
     pred_train = xgb.predict(x_train)
 
-    out_ref, train_out, test_out, train_pred, test_pred = helpers.rescale_output(
+    (
+        out_ref,
+        train_out,
+        test_out,
+        train_pred,
+        test_pred,
+    ) = helpers.rescale_output(
         string_data["feat_name"],
         output_reference,
         y_train,
@@ -81,7 +89,9 @@ def gb_pipeline(data, string_data, save=True, plot=True, vmax=None, legend=True)
     return xgb
 
 
-def gb_feature_pipeline(data, string_data, vmax=None, legend=False, noRefit=False):
+def gb_feature_pipeline(
+    data, string_data, vmax=None, legend=False, noRefit=False
+):
     """
     Pipeline used to fit a gb regressor and then perform feature selection, ranking features
     and only using the top 10 features for refit.
@@ -113,7 +123,11 @@ def gb_feature_pipeline(data, string_data, vmax=None, legend=False, noRefit=Fals
         scores.append(score)
 
     feature_rank = pd.DataFrame(
-        {"features": excluded_features, "mae_score": scores, "feat_ind": excluded_index}
+        {
+            "features": excluded_features,
+            "mae_score": scores,
+            "feat_ind": excluded_index,
+        }
     )
     feature_rank.sort_values("mae_score", inplace=True, ascending=False)
 
@@ -134,7 +148,9 @@ def gb_feature_pipeline(data, string_data, vmax=None, legend=False, noRefit=Fals
         )
 
     plot_features.plot_both(
-        feature_rank["mae_score"].values, feature_rank["features"].values, scores
+        feature_rank["mae_score"].values,
+        feature_rank["features"].values,
+        scores,
     )
 
     key_features = i_ref.columns[ranking][:10]
