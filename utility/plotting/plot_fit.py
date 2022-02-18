@@ -65,7 +65,7 @@ def plot_pvm(
     plt.title(label)
     plt.show()
     if save_str:
-        plt.savefig(save_str + ".png")
+        plt.savefig(save_str + ".pdf")
 
 
 @deprecated("Use 2d-histogram instead")

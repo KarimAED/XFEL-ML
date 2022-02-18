@@ -6,13 +6,14 @@ from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
 logger = logging.getLogger(__name__)
 
 # select strategy if gpus in use
-strategy = tf.distribute.MirroredStrategy()
+# strategy = tf.distribute.MirroredStrategy()
 
 
 # Did not use dataclass due to weird __dict__ behaviour
 class Layer:
     """
-    A wrapper for the key information to be passed to a given Layer object from tf.
+    A wrapper for the key information to be
+    passed to a given Layer object from tf.
     """
 
     def __init__(
@@ -24,14 +25,17 @@ class Layer:
         rate=0.0,
     ):
         """
-        Initalizer for the layer wrapper. Passes the kind of layer to be used (tf class),
-        as well as the key parameters to be passed.
+        Initalizer for the layer wrapper. Passes the kind of layer
+        to be used (tf class), as well as the key parameters to be passed.
 
-        :param kind: tf.keras.Layer, kind of layer to initialize with the other parameters
-        :param units: int, number of nodes for layer
-        :param activation: str, keras shorthand of the activation function to be used
-        :param kernel_regularizer: str, either 'l1', 'l2', or None
-        :param rate: float, dropout rate, only applies to Dropout layer
+        Args:
+            kind (tf.keras.Layer): kind of layer to initialize
+                with the other parameters
+            units (int): number of nodes for layer
+            activation (str): keras shorthand of the activation
+                function to be used
+            kernel_regularizer (str): either 'l1', 'l2', or None
+            rate (float): dropout rate, only applies to Dropout layer
         """
 
         # store attributes
@@ -41,7 +45,8 @@ class Layer:
         self.kernel_regularizer = kernel_regularizer
         self.rate = rate
 
-        # filter out irrelevant parameters for Dropout and BatchNormalization layers
+        # filter out irrelevant parameters for
+        # Dropout and BatchNormalization layers
         if self.kind in (Dropout, BatchNormalization):
             self.units = None
             self.activation = None
@@ -53,9 +58,11 @@ class Layer:
 
     def get_attr(self):
         """
-        Function that returns all attributes as a dict, except for the filtered ones and the kind of layer.
+        Function that returns all attributes as a dict,
+        except for the filtered ones and the kind of layer.
 
-        :return: dict, all relevant parameters to be passed to tf.keras.Layer
+        Returns:
+            dict: all relevant parameters to be passed to tf.keras.Layer
         """
         d = (
             self.__dict__.copy()
@@ -70,18 +77,28 @@ class Layer:
 
 def get_layers(shape, activation, regularizer, drop_out, batch_norm):
     """
-    Helper function to create all the relevant layers, simplification of general structure.
+    Helper function to create all the relevant layers,
+    simplification of general structure.
 
-    :param shape: array-like of int, number of nodes for each hidden layer
-    :param activation: str, activation function shorthand, to be used for all layers
-    :param regularizer: str, regularizer to be used for all layers
-    :param drop_out: float, drop-out rate to be applied between all layers
-    :param batch_norm: bool, if batch normalization is to be applied between all layers
-    :return: array-like of Layer, list containing the individual Layer objects to be used for ann construction
+    Args:
+        shape (array[int]): number of nodes for each hidden layer
+        activation (str): activation function shorthand,
+            to be used for all layers
+        regularizer (str): regularizer to be used for all layers
+        drop_out (float): drop-out rate to be applied between all layers
+        batch_norm (bool): if batch normalization is to be applied between all layers
+
+    Returns:
+        array[Layer]: list containing the individual Layer objects
+            to be used for ann construction
     """
     layer_list = []  # initialize list to fill layers with
 
-    # shape includes node counts for all layers but drop-out and batch_normalization
+    if not regularizer:
+        regularizer = None
+
+    # shape includes node counts for all layers
+    # but drop-out and batch_normalization
     for i in shape:
         # apply dense layer with parameters
         layer_list.append(
@@ -172,3 +189,33 @@ def fit_ann(
         validation_split=validation_split,
     )
     return est, hist
+
+
+def tunable_ann(h_p):
+    """Tunable version of keras model generator, for use with keras_tuner
+
+    Args:
+        h_p (keras_tuner.HyperParameters): hyperparameter object from kt
+
+    Returns:
+        tf.keras.model: the model to optimize hyperparameters for
+    """
+    n_layers = h_p.Choice("num_layers", (1, 2, 3))
+
+    layers = get_layers(
+        [h_p.Choice("units_" + str(i), (10, 20)) for i in range(n_layers)],
+        h_p.Choice("activation", ("relu", "sigmoid")),
+        h_p.Choice("regularization", ("", "l1", "l2")),
+        h_p.Float("drop_out", 0, 0.3, step=0.1),
+        h_p.Boolean("batch_norm"),
+    )
+
+    model = ann(
+        layers,
+        1,
+        h_p.Choice("loss", ("mae", "mse")),
+        tf.keras.optimizers.Adagrad(
+            learning_rate=h_p.Float("learning_rate", 1e-3, 3e-3, step=1e-3)
+        ),
+    )
+    return model

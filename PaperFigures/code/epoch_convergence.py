@@ -1,6 +1,6 @@
+import time as t
 import matplotlib.pyplot as plt
 import numpy as np
-import time as t
 from oldMode2017.setup import get_data
 from newMode2021.setup import get_data_p1
 
@@ -25,7 +25,7 @@ if for_delay:
         "AMO:R14:IOC:21:VHS7:CH0:VoltageMeasure",
     ]
     if not filter_cols:
-        selected_feats = []
+        selected_feats = None
     data = get_data(filter_cols=selected_feats)
     string_data = {
         "feat_name": "Delays",
@@ -48,7 +48,7 @@ else:
         "ebeam_ebeamLTU450",
     ]
     if not filter_cols:
-        selected_feats = []
+        selected_feats = None
     data = get_data_p1("u2_273_37026_events.pkl", filter_cols=selected_feats)
     string_data = {
         "feat_name": "vls_com_pump",
@@ -64,15 +64,53 @@ ann_est, hist = ann.ann_pipeline(data, string_data)
 e = t.time()
 
 print("Fitting duration: %.2fs" % (e - s))
+0  #%%
+
+if filter_cols:
+    hist_red = hist
+    mae = np.array(hist_red.history["mae"])
+    val_mae = np.array(hist_red.history["val_mae"])
+    mae_100 = mae * 100
+else:
+    hist_full = hist
+    full_mae = np.array(hist_full.history["mae"])
+    full_val_mae = np.array(hist_full.history["val_mae"])
 
 #%%
-plt.figure(figsize=(6, 6))
+plt.figure(figsize=(10, 10))
 plt.xlabel("Epochs")
-plt.xlim(0, 5000)
-plt.ylabel(r"$\mathcal{M}$ (normalised with variance)")
-plt.plot(hist.history["mae"], label=r"Training $\mathcal{M}$")
-plt.plot(hist.history["val_mae"], label=r"Validation $\mathcal{M}$")
-plt.hlines(np.min(hist.history["mae"]), 0, 5000, color="k", linestyle="--")
-plt.legend()
-plt.show()
-plt.savefig("PaperFigures/ec_pulse_1_full.pdf")
+# plt.xlim(0, 5000)
+# plt.ylim(-1, 0)
+plt.xscale("log")
+# plt.yscale("log")
+plt.ylabel(r"log($\mathcal{M}$)")
+plt.plot(
+    np.arange(len(mae)),
+    np.log(full_mae),
+    "b",
+    label=r"M=101, train",
+)
+plt.plot(
+    np.arange(len(mae)),
+    np.log(full_val_mae),
+    "b",
+    label=r"M=101, val",
+    ls="--",
+    alpha=0.5,
+)
+plt.plot(np.arange(len(mae)), np.log(mae), "r", label=r"M=10, train")
+plt.plot(
+    np.arange(len(mae)),
+    np.log(val_mae),
+    "r",
+    label=r"M=10, val",
+    ls="--",
+    alpha=0.5,
+)
+
+
+plt.legend(loc="lower left")
+plt.subplots_adjust(
+    left=0.17, bottom=0.12, right=0.99, top=0.99, wspace=0.4, hspace=0.1
+)
+plt.savefig("PaperFigures/ec_pulse1.pdf")

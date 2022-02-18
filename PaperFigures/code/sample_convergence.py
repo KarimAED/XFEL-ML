@@ -7,7 +7,7 @@ from utility.helpers import mae
 
 from utility.pipelines import ann, gb, lin
 
-FOR_DELAY = False
+FOR_DELAY = True
 N_STEPS = 10
 
 if FOR_DELAY:
@@ -148,8 +148,9 @@ for i in range(all_maes_np.shape[0]):
         label=labels_np[i],
     )
 
+plt.xlim(0, 30_000)
 plt.legend()
-plt.xlabel(r"$N_{samp}$")
-plt.ylabel("MAE")
+plt.xlabel(r"S")
+plt.ylabel(r"$\mathcal{M}$")
 plt.show()
 plt.savefig(FIG_NAME)

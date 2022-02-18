@@ -29,27 +29,43 @@ def get_mae(fname):
 #%%
 
 
-fig = plt.figure(figsize=(7, 3.5))
+fig = plt.figure(figsize=(14, 7))
 
 old_mae = [get_mae(i) for i in old_names]
 new_mae = [get_mae(i) for i in new_names]
 x_axis = [i + 1 for i in range(len(new_names))]
 
-plt.plot(x_axis[:3], old_mae, c="b", ls="-", marker="o")
-plt.plot(x_axis, new_mae, c="g", ls="--", marker="d")
+plt.plot(
+    x_axis[:3],
+    old_mae,
+    c="b",
+    ls="-",
+    marker="o",
+    label="Detecting both pulses",
+)
+plt.plot(
+    x_axis, new_mae, c="g", ls="--", marker="d", label="Detecting pulse 2 only"
+)
 
-plt.xlabel("u")
+plt.xlabel("number of undulators between pulses")
+plt.xticks(list(range(1, 6)), labels=list(range(1, 6)))
+
+plt.legend()
 
 if normalised:
     unit = r"\sigma"
 else:
     unit = "eV"
-plt.ylabel(r"$\mathcal{M}$ in $%s$" % unit)
+plt.ylabel(r"$\mathcal{M}$ (normalised with variance)")
 
 plt.show()
 
 str_name = "figure4"
 
-plt.savefig("PaperFigures/joined/%s.png" % str_name)
+plt.tight_layout()
+plt.subplots_adjust(
+    left=0.13, bottom=0.15, right=0.99, top=0.87, wspace=0.4, hspace=0.1
+)
+plt.savefig("PaperFigures/joined/%s.pdf" % str_name)
 
 #%%

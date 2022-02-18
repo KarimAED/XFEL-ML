@@ -61,7 +61,7 @@ def plot_both(feats, labels, vals):
     :return: None
     """
 
-    plt.figure(figsize=(7, 3.5))
+    plt.figure(figsize=(10, 5))
 
     ax_1 = plt.subplot(111)
 
@@ -77,6 +77,7 @@ def plot_both(feats, labels, vals):
     ax_1.set_yscale("log")
     ax_1.set_ylabel(r"$I_j$")
     ax_1.set_xlabel("j")
+    ax_1.set_xticks([0, 20, 40, 60, 80], labels=[0, 20, 40, 60, 80])
 
     ax_2 = ax_1.twinx()  # on the same x-axis
 

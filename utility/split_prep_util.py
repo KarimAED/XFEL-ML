@@ -21,11 +21,13 @@ def norm(data, ref, label):
     if len(ref.columns) > 1:
         assert data.shape[1] == len(
             ref.columns
-        ), "norm: number of columns in ref and data must match"
+        ), f"norm: number of columns in ref and data must match \
+             but are {len(ref.columns)} and {data.shape[1]}"
     else:
         assert (
             len(data.shape) == 1
-        ), "norm: number of columns in ref and data must match"
+        ), f"norm: number of columns in ref and data must match \
+             but are {len(ref.columns)} and {data.shape[1]}"
 
     data_mean = pd.Series(
         data=np.mean(data, axis=0),

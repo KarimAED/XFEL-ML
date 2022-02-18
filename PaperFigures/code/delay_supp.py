@@ -33,16 +33,13 @@ cmap = mpl.colors.ListedColormap(cmap, name="myBlues", N=cmap.shape[0])
 legend = False
 
 file_names = [
-    "lin_pump.npz",
-    "lin_probe.npz",
-    "gb_pump.npz",
-    "gb_probe.npz",
-    "ann_pump.npz",
-    "ann_probe.npz",
+    "lin_delay.npz",
+    "gb_delay.npz",
+    "ann_delay.npz",
 ]
 
 titles = ["LIN", "GB", "ANN"]
-units = ["eV", "eV"]
+units = ["fs"]
 
 
 edges = []
@@ -50,34 +47,22 @@ edges = []
 for i, fname in enumerate(file_names):
     data = np.load("PaperFigures/Figure Data/Figure 3/%s" % fname)
     x = data["test_out"]
-    if len(edges) <= (i % 2):
-        edges.append([np.min(x), np.max(x)])
-    elif np.min(x) < edges[i % 2][0]:
-        edges[i % 2][0] = np.min(x)
-    elif np.max(x) > edges[i % 2][1]:
-        edges[i % 2][1] = np.max(x)
+    edges.append([np.min(x), np.max(x)])
 
-fig = plt.figure(figsize=(14, 14))
 
+fig = plt.figure(figsize=(21, 7))
+print(edges)
 
 for i, fname in enumerate(file_names):
     data = np.load("PaperFigures/Figure Data/Figure 3/%s" % fname)
     x = data["test_out"]
     y = data["test_pred"]
-    ax = plt.subplot(3, 2, i + 1)
-    if i // 2 == 0:
-        plt.tick_params(axis="x", which="both", top=False)
-    else:
-        plt.tick_params(axis="x", which="both", top=True)
-    if not (i // 2 == 2):
-        ax.set_xticklabels([])
-    else:
-        if i % 2 == 0:
-            ax.set_xlabel(r"Measured $E_1(eV)$")
-        else:
-            ax.set_xlabel(r"Measured $E_2(eV)$")
+    ax = plt.subplot(1, 3, i + 1)
+    if i == 0:
+        plt.ylabel("Predicted delay (fs)")
+    plt.xlabel("Measured delay (fs)")
     # ax.yaxis.set_major_formatter(lambda x, pos: str(int(x)))
-    unit = units[i % 2]
+    unit = units[0]
     mae = np.mean(np.abs(x - y))
     e = edges[i % 2]
     if mae > 1000:
@@ -91,27 +76,23 @@ for i, fname in enumerate(file_names):
         pred_edges = ()
         x = np.append(x, e)
         y = np.append(y, e)
-    if i % 2 == 0:
-        ax.set_ylabel(r"Predicted $E_1(%s)$" % unit)
-    else:
-        ax.set_ylabel(r"Predicted $E_2(%s)$" % unit)
     plt.text(
         0.1,
         0.95,
-        r"%s; $\mathcal{M}=%.2f%s$" % (titles[i // 2], mae, unit),
+        r"%s; $\mathcal{M}=%.2f%s$" % (titles[i], mae, unit),
         transform=ax.transAxes,
         va="top",
     )
-    plt.locator_params(axis="x", nbins=4)
+    plt.locator_params(axis="x", nbins=8)
     hist = plt.hist2d(x, y, cmap=cmap, bins=50, vmax=45)
     if i == 8 and legend:
         plt.colorbar(ax=ax)
-    plt.plot(edges, edges, "k--")
+    plt.plot(edges[0], edges[0], "k--")
 
 plt.tight_layout()
 plt.subplots_adjust(
-    left=0.15, bottom=0.1, right=0.95, top=0.95, wspace=0.4, hspace=0.1
+    left=0.13, bottom=0.15, right=0.95, top=0.95, wspace=0.3, hspace=0.1
 )
-plt.savefig("PaperFigures/joined/figure3.pdf")
+plt.savefig("PaperFigures/joined/delay_fig_supp.pdf")
 
 #%%
