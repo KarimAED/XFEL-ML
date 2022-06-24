@@ -2,8 +2,6 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-
 # create colormap
 # ---------------
 
@@ -30,7 +28,7 @@ cmap = mpl.colors.ListedColormap(cmap, name="myBlues", N=cmap.shape[0])
 
 #%%
 
-legend = False
+LEGEND = False
 
 file_names = [
     "lin_pump.npz",
@@ -42,14 +40,14 @@ file_names = [
 ]
 
 titles = ["LIN", "GB", "ANN"]
-units = ["eV", "eV"]
+units = [r"\sigma", r"\sigma"]
 
 
 edges = []
 
 for i, fname in enumerate(file_names):
     data = np.load("PaperFigures/Figure Data/Figure 3/%s" % fname)
-    x = data["test_out"]
+    x = (data["test_out"] - np.mean(data["train_out"])) / np.std(data["train_out"])
     if len(edges) <= (i % 2):
         edges.append([np.min(x), np.max(x)])
     elif np.min(x) < edges[i % 2][0]:
@@ -64,18 +62,22 @@ for i, fname in enumerate(file_names):
     data = np.load("PaperFigures/Figure Data/Figure 3/%s" % fname)
     x = data["test_out"]
     y = data["test_pred"]
+    x_mean = np.mean(data["train_out"])
+    x_std = np.std(data["train_out"])
+    x = (x - x_mean) / x_std
+    y = (y - x_mean) / x_std
     ax = plt.subplot(3, 2, i + 1)
     if i // 2 == 0:
         plt.tick_params(axis="x", which="both", top=False)
     else:
         plt.tick_params(axis="x", which="both", top=True)
-    if not (i // 2 == 2):
+    if not i // 2 == 2:
         ax.set_xticklabels([])
     else:
         if i % 2 == 0:
-            ax.set_xlabel(r"Measured $E_1(eV)$")
+            ax.set_xlabel(r"Measured $E_1(\sigma)$")
         else:
-            ax.set_xlabel(r"Measured $E_2(eV)$")
+            ax.set_xlabel(r"Measured $E_2(\sigma)$")
     # ax.yaxis.set_major_formatter(lambda x, pos: str(int(x)))
     unit = units[i % 2]
     mae = np.mean(np.abs(x - y))
@@ -85,8 +87,7 @@ for i, fname in enumerate(file_names):
         ax.ticklabel_format(
             style="scientific", axis="y", scilimits=(0, 0), useMathText=True
         )
-        mae = mae / 1000
-        unit = "keV"
+        # mae = mae / 1000
     else:
         pred_edges = ()
         x = np.append(x, e)
@@ -104,9 +105,9 @@ for i, fname in enumerate(file_names):
     )
     plt.locator_params(axis="x", nbins=4)
     hist = plt.hist2d(x, y, cmap=cmap, bins=50, vmax=45)
-    if i == 8 and legend:
+    if i == 8 and LEGEND:
         plt.colorbar(ax=ax)
-    plt.plot(edges, edges, "k--")
+    plt.plot((np.min(x), np.max(x)), (np.min(x), np.max(x)), "k--")
 
 plt.tight_layout()
 plt.subplots_adjust(

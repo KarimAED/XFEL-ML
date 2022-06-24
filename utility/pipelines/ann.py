@@ -217,7 +217,7 @@ def ann_feature_pipeline(
     # loop over all features again
     # including only the top x features
     # and refitting the estimator for each of them
-    for feat_set in range(0, len(ranking), 5):
+    for feat_set in range(0, len(ranking), 1):
         print(
             f"Refitting with the top {feat_set + 1} / {len(ranking)} feats",
             end="\r",

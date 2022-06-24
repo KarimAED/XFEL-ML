@@ -61,7 +61,7 @@ def plot_both(feats, labels, vals):
     :return: None
     """
 
-    plt.figure(figsize=(10, 5))
+    plt.figure(figsize=(10, 8))
 
     ax_1 = plt.subplot(111)
 
@@ -82,7 +82,7 @@ def plot_both(feats, labels, vals):
     ax_2 = ax_1.twinx()  # on the same x-axis
 
     ax_2.plot(
-        list(range(len(labels)))[::5], vals, color="b"
+        list(range(len(labels))), vals, color="b"
     )  # plot mae of cumulative features included
     ax_2.tick_params(axis="y", colors="b")
     ax_2.yaxis.label.set_color("b")

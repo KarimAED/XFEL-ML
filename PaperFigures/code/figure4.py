@@ -53,10 +53,10 @@ plt.xticks(list(range(1, 6)), labels=list(range(1, 6)))
 plt.legend()
 
 if normalised:
-    unit = r"\sigma"
+    unit = r"$\sigma$"
 else:
     unit = "eV"
-plt.ylabel(r"$\mathcal{M}$ (normalised with variance)")
+plt.ylabel(r"$\mathcal{M}$" + f" ({unit})")
 
 plt.show()
 
