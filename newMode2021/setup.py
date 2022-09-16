@@ -10,7 +10,7 @@ from scipy.spatial.distance import squareform
 
 
 def get_data_p1(
-    fname, split=0.15, include_probe=True, filterByCorr=False, filter_cols=[]
+    fname, split=0.15, include_p2=True, filter_cols=[]
 ):
     pathname = f"newMode2021/data/{fname}"
 
@@ -20,7 +20,7 @@ def get_data_p1(
 
     for name, column in all_df.iteritems():
         cols = ["epics_", "ebeam_", "gmd_", "xgmd_"]
-        if include_probe:
+        if include_p2:
             cols.append("probe")
         inp = [i in name for i in cols]
         if any(inp):
@@ -40,7 +40,7 @@ def get_data_p1(
 
     print("Filtering events...")
     # get prepared mask
-    if include_probe:
+    if include_p2:
         pump_nan = (
             pump_out["vls_com_pump"].notna().values
             & pp_inp["vls_com_probe"].notna().values
@@ -64,29 +64,6 @@ def get_data_p1(
     pump_inp = pump_inp[feat_columns]
     if filter_cols:
         pump_inp = pump_inp[filter_cols]
-    if filterByCorr:
-        corr = spearmanr(pump_inp.values).correlation
-
-        # Ensure the correlation matrix is symmetric
-        corr = np.abs((corr + corr.T) / 2)
-        np.fill_diagonal(corr, 1)
-
-        # We convert the correlation matrix to a distance matrix before performing
-        # hierarchical clustering using Ward's linkage.
-        distance_matrix = 1 - np.abs(corr)
-        dist_linkage = hierarchy.ward(squareform(distance_matrix))
-        dendro = hierarchy.dendrogram(
-            dist_linkage,
-            labels=[i for i in range(len(pump_inp.columns))],
-            leaf_rotation=90,
-        )
-        dendro_idx = np.arange(0, len(dendro["ivl"]))
-        cluster_ids = hierarchy.fcluster(dist_linkage, 1, criterion="distance")
-        cluster_id_to_feature_ids = defaultdict(list)
-        for idx, cluster_id in enumerate(cluster_ids):
-            cluster_id_to_feature_ids[cluster_id].append(idx)
-        selected_features = [v[0] for v in cluster_id_to_feature_ids.values()]
-        pump_inp = pump_inp[pump_inp.columns[selected_features]]
     print(pump_inp.shape[1], "columns left.")
     print("Filtering MAD & Energy...")
     # Get mean absolute deviation of outputs
@@ -97,7 +74,7 @@ def get_data_p1(
 
     mad_mask = mad_delays < 4
 
-    if include_probe:
+    if include_p2:
         mad_2_delays = abs(
             (
                 pump_inp["vls_com_probe"].values
@@ -118,7 +95,7 @@ def get_data_p1(
     return train_test_norm(pump_inp, pump_out, split=split)
 
 
-def get_data_p2(fname, split=0.15, include_pump=True, filter_cols=[]):
+def get_data_p2(fname, split=0.15, include_p1=True, filter_cols=[]):
     pathname = f"newMode2021/data/{fname}"
 
     inp_df = pd.DataFrame()
@@ -127,7 +104,7 @@ def get_data_p2(fname, split=0.15, include_pump=True, filter_cols=[]):
 
     for name, column in all_df.iteritems():
         cols = ["epics_", "ebeam_", "gmd_", "xgmd_"]
-        if include_pump:
+        if include_p1:
             cols.append("pump")
         inp = [i in name for i in cols]
         if any(inp):
@@ -147,7 +124,7 @@ def get_data_p2(fname, split=0.15, include_pump=True, filter_cols=[]):
 
     print("Filtering events...")
     # get prepared mask
-    if include_pump:
+    if include_p1:
         probe_nan = (
             probe_out["vls_com_probe"].notna().values
             & pp_inp["vls_com_pump"].notna().values
@@ -156,7 +133,6 @@ def get_data_p2(fname, split=0.15, include_pump=True, filter_cols=[]):
     else:
         probe_nan = probe_out["vls_com_probe"].notna().values
     probe_mask = probe_nan.astype(np.bool)  # Also mask NaN values
-
     # apply masking of events
     probe_inp = pp_inp.loc[probe_mask].copy()
     probe_out = pp_out.loc[
@@ -184,7 +160,7 @@ def get_data_p2(fname, split=0.15, include_pump=True, filter_cols=[]):
 
     mad_mask = mad_delays < 4
 
-    if include_pump:
+    if include_p1:
         mad_2_delays = abs(
             (
                 probe_inp["vls_com_pump"].values

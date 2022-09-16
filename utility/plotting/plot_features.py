@@ -70,9 +70,8 @@ def plot_both(feats, labels, vals):
         list(range(len(labels))),
         feats / np.min(feats) - 1,
         align="center",
-        edgecolor="black",
         color="grey",
-        alpha=0.5,
+        alpha=0.4,
     )
     ax_1.set_yscale("log")
     ax_1.set_ylabel(r"$I_j$")
@@ -81,8 +80,9 @@ def plot_both(feats, labels, vals):
 
     ax_2 = ax_1.twinx()  # on the same x-axis
 
+    nan_vals = vals[~np.isnan(vals)]
     ax_2.plot(
-        list(range(len(labels))), vals, color="b"
+        [i for i, v in enumerate(vals) if ~np.isnan(v)], nan_vals, color="b"
     )  # plot mae of cumulative features included
     ax_2.tick_params(axis="y", colors="b")
     ax_2.yaxis.label.set_color("b")
@@ -90,5 +90,3 @@ def plot_both(feats, labels, vals):
     ax_2.spines["right"].set_color("b")
 
     plt.tight_layout()
-    plt.savefig("feat_sel.pdf")
-    plt.show()

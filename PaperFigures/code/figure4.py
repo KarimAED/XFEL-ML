@@ -11,6 +11,14 @@ new_names = [
     "new_u4.npz",
     "new_u5.npz",
 ]
+new_lin_names = [
+    "new_lin_u1.npz",
+    "new_lin_u2.npz",
+    "new_lin_u3.npz",
+    "new_lin_u4.npz",
+    "new_lin_u5.npz"
+]
+
 
 normalised = True
 #%%
@@ -33,6 +41,7 @@ fig = plt.figure(figsize=(14, 7))
 
 old_mae = [get_mae(i) for i in old_names]
 new_mae = [get_mae(i) for i in new_names]
+new_lin_mae = [get_mae(i) for i in new_lin_names]
 x_axis = [i + 1 for i in range(len(new_names))]
 
 plt.plot(
@@ -41,16 +50,16 @@ plt.plot(
     c="b",
     ls="-",
     marker="o",
-    label="Detecting both pulses",
+    label="ANN - pulse 1 and 2",
 )
 plt.plot(
-    x_axis, new_mae, c="g", ls="--", marker="d", label="Detecting pulse 2 only"
+    x_axis, new_mae, c="g", ls="--", marker="d", label="ANN - pulse 2 only"
 )
+plt.plot(x_axis, new_lin_mae, c="m", ls="-.", marker="$\\bigotimes$",
+         markersize=13, label="LIN - pulse 2 only")
 
 plt.xlabel("number of undulators between pulses")
 plt.xticks(list(range(1, 6)), labels=list(range(1, 6)))
-
-plt.legend()
 
 if normalised:
     unit = r"$\sigma$"
@@ -58,6 +67,7 @@ else:
     unit = "eV"
 plt.ylabel(r"$\mathcal{M}$" + f" ({unit})")
 
+plt.gca().legend()
 plt.show()
 
 str_name = "figure4"

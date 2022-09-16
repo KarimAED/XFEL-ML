@@ -7,7 +7,7 @@ from utility.helpers import mae
 
 from utility.pipelines import ann, gb, lin
 
-FOR_DELAY = True
+FOR_DELAY = False
 N_STEPS = 10
 
 if FOR_DELAY:
@@ -120,37 +120,3 @@ print(all_maes)
 np.savetxt(
     SAVE_NAME, np.array(all_maes), delimiter=",", header=",".join(labels)
 )
-
-#%%
-with open(SAVE_NAME, "r") as inp:
-    lines = inp.readlines()
-
-labels = lines[0].split(" ")[1].split(",")
-
-all_maes = np.loadtxt(SAVE_NAME, skiprows=1, delimiter=",")
-
-#%%
-colors = ["k", "r", "b"]
-plt.figure(figsize=(10, 10))
-all_maes_np = np.array(all_maes).T[(0, 1, 4, 5), :]
-labels_np = np.array(labels)[[0, 1, 4, 5]]
-for i in range(all_maes_np.shape[0]):
-    mae = all_maes_np[i]
-    style = colors[i // 2]
-    if i % 2 == 0:
-        style += "--"
-    else:
-        style += "-"
-    plt.plot(
-        [(j + 1) * step_size for j in range(len(mae))],
-        mae,
-        style,
-        label=labels_np[i],
-    )
-
-plt.xlim(0, 30_000)
-plt.legend()
-plt.xlabel(r"S")
-plt.ylabel(r"$\mathcal{M}$")
-plt.show()
-plt.savefig(FIG_NAME)

@@ -1,16 +1,25 @@
-import logging
 import numpy as np
-
-logger = logging.getLogger("general_util")
 
 
 # Helper function to evaluate mean absolute error (mae of two numpy arrays)
-def mae(x, y):
-    logger.info("MAE Here")
-    return np.mean(np.abs(x - y))
+def mae(x_arr, y_arr):
+    """Shorthand to evaluate mean absolute error between two numpy arrays.
+    Must have the same shape.
+
+    :param x_arr: np.ndarray, first array for mae.
+    :param y_arr: np.ndarray, second array for mae.
+    :return: float, mean absolute error between arrays.
+    """
+    return np.mean(np.abs(x_arr - y_arr))
 
 
 def permute(x_test, i):
+    """Perform permutation of the ith column of the x_test array.
+
+    :param x_test: np.ndarray, array to take a column to permute from.
+    :param i: int, index of the column to permute.
+    :return: np.ndarray, array with column permuted.
+    """
     x_te_masked = []
     for j in range(x_test.shape[1]):
         if j != i:
@@ -22,9 +31,17 @@ def permute(x_test, i):
     return x_te_masked
 
 
-def top_x_data(data, ranking, x):
-    x_train, x_test, y_train, y_test, input_reference, output_reference = data
-    feats = ranking[: x + 1]
+def top_x_data(data, ranking, x_int):
+    """Modify data to only contain the top x features.
+
+    :param data:
+    :param ranking:
+    :param x_int:
+    :return:
+    """
+    print(ranking)
+    x_train, x_test, _, _, input_reference, _ = data
+    feats = ranking[: x_int + 1]
     x_tr = x_train[:, feats]
     x_te = x_test[:, feats]
     data_temp = list(data)

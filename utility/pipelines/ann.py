@@ -9,10 +9,9 @@ Methods:
 import logging
 from types import SimpleNamespace
 import numpy as np
-import pandas as pd
 
 from utility.estimators import neural_network
-from utility.plotting import plot_fit, plot_features
+from utility.plotting import plot_fit
 from utility import helpers
 
 logger = logging.getLogger("pipelines")
@@ -49,7 +48,8 @@ def ann_pipeline(data, string_data, **kwargs):
 
     args = SimpleNamespace(**kw_dict)
 
-    print("Starting ann training...")
+    if args.verbose != 0:
+        print("Starting ann training...")
     logger.info("Fitting ANN on data...")
 
     # unpack data
@@ -74,8 +74,9 @@ def ann_pipeline(data, string_data, **kwargs):
 
     # print training and testing mean absolute error (KPMs)
     # both are printed to inform about potential overfitting
-    print(f"Training MAE: {ann.evaluate(x_train, y_train)[1]}")
-    print(f"Testing MAE: {ann.evaluate(x_test, y_test)[1]}")
+    if args.verbose != 0:
+        print(f"Training MAE: {ann.evaluate(x_train, y_train, verbose=args.verbose)[1]}")
+        print(f"Testing MAE: {ann.evaluate(x_test, y_test, verbose=args.verbose)[1]}")
 
     # make predictions on the test set
     predictions = ann.predict(x_test).T[0]
@@ -135,119 +136,3 @@ def ann_pipeline(data, string_data, **kwargs):
         )
 
     return ann, hist
-
-
-def ann_feature_pipeline(
-    data,
-    string_data,
-    vmax=None,
-    legend=True,
-    no_refit=False,
-):
-    """Pipeline used to fit an ann with feature selection
-
-    Pipeline used to fit an ann and then perform feature selection,
-    ranking features and only using the top 10 features for refit,
-    if desired.
-
-    Args:
-        data (array[object]): contains x_train, x_test, y_train, y_test,
-            input_reference, output_reference, as returned by data scripts
-        string_data (dict): contains strings as labels, filenames, etc.
-        vmax (int): vmax to use for the colorbar of the 2d-hist
-        legend (bool): if a colorbar legend should be displayed
-        no_refit (bool): if true, the function terminates after having
-            found the key features, otherwise ann is fit again
-
-    Returns:
-        object: if no_refit returns features ranked by feature importance,
-            else returns refit estimator, top 10 features used in the refit
-    """
-    # unpack the data
-    _, x_test, _, y_test, input_reference, output_reference = data
-    ann, _ = ann_pipeline(
-        data, string_data, save=False, plot=False
-    )  # perform initial fitting
-
-    # set up everything to rank features
-    i_ref = input_reference
-    scores = []
-    permuted_features = []
-    permuted_index = []
-
-    # loop over all features one by oneto exclude them
-    for i, col in enumerate(i_ref.columns):
-        score = 0
-        for k in range(5):  # average over 5 permutations
-            max_col = len(i_ref.columns)
-            print(
-                f"feature {i + 1} / {max_col}; permutation {k} / 5",
-                end="\r",
-            )
-            x_te_masked = helpers.permute(x_test, i)
-            score += ann.evaluate(x_te_masked, y_test, verbose=0)[1] / 5
-        permuted_features.append(col)
-        permuted_index.append(i)
-        # evaluate estimator performance
-        # with one feature scrambled (on test set)
-        scores.append(score)
-
-    # get data frame ranking all features
-    feature_rank = pd.DataFrame(
-        {
-            "features": permuted_features,
-            "mae_score": scores,
-            "feat_ind": permuted_index,
-        }
-    )
-    feature_rank.sort_values(
-        "mae_score", inplace=True, ascending=False
-    )  # sort data frame by feature importance
-
-    ranking = feature_rank["feat_ind"].values
-
-    logger.info(i_ref.columns[ranking].tolist())
-
-    # return all features ranked if not to refit
-    if no_refit:
-        return i_ref.columns[ranking]
-
-    scores = []
-
-    # loop over all features again
-    # including only the top x features
-    # and refitting the estimator for each of them
-    for feat_set in range(0, len(ranking), 1):
-        print(
-            f"Refitting with the top {feat_set + 1} / {len(ranking)} feats",
-            end="\r",
-        )
-        data_temp = helpers.top_x_data(data, ranking, feat_set)
-        temp_ann, _ = ann_pipeline(
-            data_temp, string_data, save=False, plot=False, verbose=0
-        )
-        # collect scores with top x features included
-        scores.append(
-            temp_ann.evaluate(data_temp[1], y_test)[1]
-            * output_reference.loc["test_std", string_data["feat_name"]]
-        )
-
-    # plot feature importance and mae score
-    # with features up to feature j on one plot
-    plot_features.plot_both(
-        feature_rank["mae_score"].values,
-        feature_rank["features"].values,
-        scores,
-    )
-
-    # select top 10 features as key features
-    key_features = i_ref.columns[ranking][:10]
-
-    data_filtered = helpers.top_x_data(data, ranking, 10)
-
-    # refit estimator with top features
-    new_ann, _ = ann_pipeline(
-        data_filtered, string_data, vmax=vmax, legend=legend
-    )
-
-    return new_ann, key_features

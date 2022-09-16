@@ -78,38 +78,7 @@ else:
 
 #%%
 plt.figure(figsize=(10, 10))
-plt.xlabel("Epochs")
-# plt.xlim(0, 5000)
-# plt.ylim(-1, 0)
-plt.xscale("log")
-# plt.yscale("log")
-plt.ylabel(r"log($\mathcal{M}$)")
-plt.plot(
-    np.arange(len(mae)),
-    np.log(full_mae),
-    "b",
-    label=r"M=101, train",
-)
-plt.plot(
-    np.arange(len(mae)),
-    np.log(full_val_mae),
-    "b",
-    label=r"M=101, val",
-    ls="--",
-    alpha=0.5,
-)
-plt.plot(np.arange(len(mae)), np.log(mae), "r", label=r"M=10, train")
-plt.plot(
-    np.arange(len(mae)),
-    np.log(val_mae),
-    "r",
-    label=r"M=10, val",
-    ls="--",
-    alpha=0.5,
-)
 
-
-plt.legend(loc="lower left")
 plt.subplots_adjust(
     left=0.17, bottom=0.12, right=0.99, top=0.99, wspace=0.4, hspace=0.1
 )
