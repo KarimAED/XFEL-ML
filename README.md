@@ -121,7 +121,7 @@ XFEL-ML
 
 For a blog style article on this subject, [check out my website](https://www.aedin.dev/post-laser-prediction/).
 
-The full paper can be found [here](https://www.nature.com/articles/s41598-024-56782-z)
+The full paper can be found [here](https://www.nature.com/articles/s41598-024-56782-z).
 
 
 ## About
