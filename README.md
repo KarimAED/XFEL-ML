@@ -2,7 +2,6 @@
 
 Efficient prediction of double-pulse X-ray free-electron laser with machine learning
 
-
 ## Motivation
 
 X-Ray Free Electron Lasers are often used for imaging (spectroscopy) in fields like biology,
@@ -120,18 +119,14 @@ XFEL-ML
 
 ## More resources
 
-For a blog style article on this subject, visit karimaed.github.io/XFEL-ML/
+For a blog style article on this subject, [check out my website](https://www.aedin.dev/post-laser-prediction/).
 
-Paper reference will be added here once it is on the archive.
+The full paper can be found [here](https://www.nature.com/articles/s41598-024-56782-z)
 
 
 ## About
 
 I, Karim Alaa El-Din, am the sole author of this repository. It is the code for my
-bachelor's project turned part-time research studentship, which is currently being
-written up as a peer-reviewed paper. Other people who contributed to the project are:
-1. Rick Mukherjee, My supervisor
-2. Florian Mintert, My assessor
-3. Oliver Alexander, with experimental insights
-4. John Marangos, with continued input and support
-5. Leszek Frasinski, with continued input and support
+bachelor's project turned part-time research studentship, which has been published in Scientific Reports.
+
+For a full list of collaborators, please refer to the paper!
